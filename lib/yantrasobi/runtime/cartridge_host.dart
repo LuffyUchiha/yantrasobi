@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:asobi_party/asobi_party.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
@@ -14,9 +15,12 @@ import 'services.dart';
 /// pause menu, result card, perf overlay, Android back handling and automatic
 /// pause when the app is backgrounded.
 class CartridgeHostScreen extends StatefulWidget {
-  const CartridgeHostScreen({super.key, required this.cartridge});
+  const CartridgeHostScreen({super.key, required this.cartridge, this.match});
 
   final Cartridge cartridge;
+
+  /// Set when the run is part of a party match (see docs/MULTIPLAYER.md).
+  final PartyMatch? match;
 
   @override
   State<CartridgeHostScreen> createState() => _CartridgeHostScreenState();
@@ -27,6 +31,17 @@ class _CartridgeHostScreenState extends State<CartridgeHostScreen> with WidgetsB
   late AsobiServices _services;
   late CartridgeSave _save;
   bool _recordedResult = false;
+
+  // Party match plumbing (null in solo play).
+  ParallelRace? _race;
+  StreamSubscription<SyncEvent>? _raceSub;
+  Timer? _raceTicker;
+  bool _reportedToMatch = false;
+
+  PartyMatch? get _match => widget.match;
+
+  /// Online matches can't restart: everyone shares one run.
+  bool get _online => _match?.connection == Connection.online;
 
   @override
   void initState() {
@@ -49,8 +64,22 @@ class _CartridgeHostScreenState extends State<CartridgeHostScreen> with WidgetsB
         settings: _services.settings,
         onSaveChanged: _persist,
         dataPacks: [for (final pack in _services.packs.packsFor(id)) pack.payload],
+        match: _match,
       ),
     );
+    final match = _match;
+    if (match != null && _online && match.spec.sync == SyncModel.parallel) {
+      final race = ParallelRace(match);
+      _race = race;
+      _raceSub = race.events.listen((_) {
+        if (mounted) setState(() {});
+      });
+      // The host reports the cartridge's live score, so race cartridges need no network code.
+      _raceTicker = Timer.periodic(const Duration(milliseconds: 200), (_) {
+        final st = _session?.state;
+        if (st == SessionState.running || st == SessionState.paused) race.report(score: session.liveScore);
+      });
+    }
     _session = session..addListener(_onSessionChanged);
     _save.plays++;
     _persist();
@@ -68,6 +97,7 @@ class _CartridgeHostScreenState extends State<CartridgeHostScreen> with WidgetsB
       if (r.score > _save.bestScore) _save.bestScore = r.score;
       if (r.won == true) _save.wins++;
       _persist();
+      _reportToMatch(r.score, r.won);
       _services.audio.play(r.won == false ? Sfx.lose : Sfx.win);
     } else if (s.state == SessionState.running) {
       _recordedResult = false;
@@ -80,8 +110,28 @@ class _CartridgeHostScreenState extends State<CartridgeHostScreen> with WidgetsB
     if (state != AppLifecycleState.resumed) _session?.pause();
   }
 
+  /// Hands this phone's result to the party. Leaving early counts as a loss.
+  void _reportToMatch(int score, bool? won) {
+    final match = _match;
+    if (match == null || _reportedToMatch || match.isOver) return;
+    _reportedToMatch = true;
+    final race = _race;
+    if (race != null) {
+      race.finish(score: score, won: won);
+      return;
+    }
+    // Same phone: the cartridge itself says who won; record the shared run for every seat.
+    for (final seat in match.localSeats) {
+      match.finish(score: score, won: _online ? won : null, seat: seat.index);
+    }
+  }
+
   @override
   void dispose() {
+    _raceTicker?.cancel();
+    if (_match != null && !_reportedToMatch) _reportToMatch(_session?.liveScore ?? 0, false);
+    _raceSub?.cancel();
+    _race?.dispose();
     WidgetsBinding.instance.removeObserver(this);
     _session?.removeListener(_onSessionChanged);
     _session?.dispose();
@@ -138,6 +188,16 @@ class _CartridgeHostScreenState extends State<CartridgeHostScreen> with WidgetsB
                 ),
               ),
             ),
+            if (_race != null)
+              SafeArea(
+                child: Align(
+                  alignment: Alignment.topRight,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(64, 10, 8, 0),
+                    child: _RaceStrip(match: _match!, race: _race!),
+                  ),
+                ),
+              ),
             if (s.state == SessionState.paused)
               _Panel(
                 key: const Key('host.pauseMenu'),
@@ -146,10 +206,11 @@ class _CartridgeHostScreenState extends State<CartridgeHostScreen> with WidgetsB
                 subtitle: m.goal,
                 actions: [
                   _PanelAction('Resume', Icons.play_arrow_rounded, s.resume, key: const Key('host.resume')),
-                  _PanelAction('Restart', Icons.replay_rounded, _restart, key: const Key('host.restart')),
+                  if (!_online)
+                    _PanelAction('Restart', Icons.replay_rounded, _restart, key: const Key('host.restart')),
                   _PanelAction(
-                    'Exit to library',
-                    Icons.grid_view_rounded,
+                    _online ? 'Forfeit and leave' : 'Exit to library',
+                    _online ? Icons.flag_rounded : Icons.grid_view_rounded,
                     _exit,
                     key: const Key('host.exit'),
                   ),
@@ -160,8 +221,10 @@ class _CartridgeHostScreenState extends State<CartridgeHostScreen> with WidgetsB
                 result: s.result!,
                 best: _save.bestScore,
                 accent: m.accent,
-                onReplay: _restart,
+                onReplay: _online ? null : _restart,
                 onExit: _exit,
+                exitLabel: _match != null ? 'Back to party' : 'Exit to library',
+                standings: _online ? _Standings(match: _match!) : null,
               ),
           ],
         ),
@@ -280,13 +343,19 @@ class _ResultPanel extends StatelessWidget {
     required this.accent,
     required this.onReplay,
     required this.onExit,
+    this.exitLabel = 'Exit to library',
+    this.standings,
   });
 
   final RunResult result;
   final int best;
   final Color accent;
-  final VoidCallback onReplay;
+
+  /// Null hides "Play again" (online party matches).
+  final VoidCallback? onReplay;
   final VoidCallback onExit;
+  final String exitLabel;
+  final Widget? standings;
 
   @override
   Widget build(BuildContext context) {
@@ -321,11 +390,13 @@ class _ResultPanel extends StatelessWidget {
                 ],
               ),
             ),
+          if (standings != null) ...[const Divider(height: 22), standings!],
         ],
       ),
       actions: [
-        _PanelAction('Play again', Icons.replay_rounded, onReplay, key: const Key('host.replay')),
-        _PanelAction('Exit to library', Icons.grid_view_rounded, onExit, key: const Key('host.resultExit')),
+        if (onReplay != null)
+          _PanelAction('Play again', Icons.replay_rounded, onReplay!, key: const Key('host.replay')),
+        _PanelAction(exitLabel, Icons.grid_view_rounded, onExit, key: const Key('host.resultExit')),
       ],
     );
   }
@@ -389,4 +460,102 @@ class _PerfOverlayState extends State<_PerfOverlay> with SingleTickerProviderSta
       ),
     ),
   );
+}
+
+/// Live opponent scores during a party race.
+class _RaceStrip extends StatelessWidget {
+  const _RaceStrip({required this.match, required this.race});
+
+  final PartyMatch match;
+  final ParallelRace race;
+
+  @override
+  Widget build(BuildContext context) {
+    final opponents = [
+      for (final seat in match.seats)
+        if (!seat.isLocal) seat,
+    ];
+    return Wrap(
+      key: const Key('host.raceStrip'),
+      alignment: WrapAlignment.end,
+      spacing: 6,
+      runSpacing: 6,
+      children: [
+        for (final seat in opponents)
+          Builder(
+            builder: (context) {
+              final t = race.opponents[seat.index];
+              final done = match.results[seat.index];
+              final out = !seat.connected || done != null || t?.alive == false;
+              final score = done?.score ?? t?.score ?? 0;
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${seat.name} $score${!seat.connected ? ' · left' : (out ? ' · done' : '')}',
+                  style: TextStyle(
+                    color: out ? Colors.white54 : Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13,
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                  ),
+                ),
+              );
+            },
+          ),
+      ],
+    );
+  }
+}
+
+/// Party standings on the result card: final ranking, or who is still playing.
+class _Standings extends StatelessWidget {
+  const _Standings({required this.match});
+
+  final PartyMatch match;
+
+  @override
+  Widget build(BuildContext context) {
+    final standings = match.standings;
+    if (standings == null) {
+      final playing = [
+        for (final seat in match.seats)
+          if (!match.results.containsKey(seat.index)) seat.name,
+      ];
+      return Text(
+        'Waiting for ${playing.join(', ')} to finish…',
+        key: const Key('host.waiting'),
+        textAlign: TextAlign.center,
+        style: const TextStyle(color: Colors.white70),
+      );
+    }
+    return Column(
+      key: const Key('host.standings'),
+      children: [
+        for (var i = 0; i < standings.length; i++)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 3),
+            child: Row(
+              children: [
+                Text('${i + 1}.  ', style: const TextStyle(color: Colors.white60)),
+                Expanded(
+                  child: Text(
+                    '${match.seats[standings[i].seat].name}${match.isLocal(standings[i].seat) ? ' (you)' : ''}'
+                    '${standings[i].forfeit ? ' · left' : ''}',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: i == 0 ? FontWeight.w900 : FontWeight.w600,
+                    ),
+                  ),
+                ),
+                Text('${standings[i].score}', style: const TextStyle(fontWeight: FontWeight.w700)),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
 }

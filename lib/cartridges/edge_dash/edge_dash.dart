@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 import 'dart:ui';
 
+import 'package:asobi_party/asobi_party.dart' show MultiplayerSpec, SyncModel;
+
 import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart' show Alignment, Colors, Icons;
 
@@ -43,13 +45,19 @@ class EdgeDashCartridge extends FlameCartridge<EdgeDashGame> {
       'boss weak spot',
     ],
     goal: 'Survive 12 waves with 3 hearts, then cut the boss through its glowing weak spot.',
+    multiplayer: MultiplayerSpec(
+      sync: SyncModel.parallel,
+      maxPlayers: 8,
+      summary: 'Same course for everyone; highest score wins',
+    ),
   );
 
   @override
   CartridgeManifest get manifest => kManifest;
 
   @override
-  EdgeDashGame createGame(FlameCartridgeSession<EdgeDashGame> session) => EdgeDashGame(session);
+  EdgeDashGame createGame(FlameCartridgeSession<EdgeDashGame> session) =>
+      EdgeDashGame(session, seed: session.context.matchSeed);
 }
 
 // Ink palette.
@@ -102,6 +110,9 @@ class EdgeDashGame extends AsobiFlameGame {
 
   @override
   int get entityCount => (_w?.entityCount ?? 0) + sparks.count;
+
+  @override
+  int get liveScore => _w?.score ?? 0;
 
   @override
   Color backgroundColor() => const Color(0xFF16120F);

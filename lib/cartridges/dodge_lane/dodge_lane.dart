@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 import 'dart:ui';
 
+import 'package:asobi_party/asobi_party.dart' show MultiplayerSpec, SyncModel;
+
 import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart' show Alignment, Colors, Icons;
 
@@ -43,13 +45,19 @@ class DodgeLaneCartridge extends FlameCartridge<DodgeLaneGame> {
       'near misses',
     ],
     goal: 'Survive as long as you can. One hit ends the run unless shielded. Score = metres + 10 per coin.',
+    multiplayer: MultiplayerSpec(
+      sync: SyncModel.parallel,
+      maxPlayers: 8,
+      summary: 'Same road for everyone; highest score wins',
+    ),
   );
 
   @override
   CartridgeManifest get manifest => kManifest;
 
   @override
-  DodgeLaneGame createGame(FlameCartridgeSession<DodgeLaneGame> session) => DodgeLaneGame(session);
+  DodgeLaneGame createGame(FlameCartridgeSession<DodgeLaneGame> session) =>
+      DodgeLaneGame(session, seed: session.context.matchSeed);
 }
 
 class DodgeLaneGame extends AsobiFlameGame {
@@ -106,6 +114,9 @@ class DodgeLaneGame extends AsobiFlameGame {
 
   @override
   int get entityCount => run.entityCount + sparks.count;
+
+  @override
+  int get liveScore => run.score;
 
   @override
   void onGameResize(Vector2 size) {

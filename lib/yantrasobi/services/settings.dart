@@ -16,6 +16,11 @@ class AsobiSettings extends ChangeNotifier {
   bool _haptics = true;
   bool _showPerf = false;
   bool _reducedEffects = false;
+  String _playerName = '';
+  String _relayUrl = kDefaultRelayUrl;
+
+  /// Relay baked in at build time: `--dart-define=YANTRASOBI_RELAY=wss://host`.
+  static const String kDefaultRelayUrl = String.fromEnvironment('YANTRASOBI_RELAY');
 
   bool get sound => _sound;
   bool get haptics => _haptics;
@@ -25,6 +30,15 @@ class AsobiSettings extends ChangeNotifier {
 
   /// Cartridges may lower particle counts / screen shake when set.
   bool get reducedEffects => _reducedEffects;
+
+  /// Name shown to friends in a party (empty until the player picks one).
+  String get playerName => _playerName;
+
+  /// Party relay address, e.g. `wss://party.example.com` or `ws://192.168.1.20:8787`.
+  String get relayUrl => _relayUrl;
+
+  set playerName(String v) => _set(() => _playerName = v.trim());
+  set relayUrl(String v) => _set(() => _relayUrl = v.trim());
 
   set sound(bool v) => _set(() => _sound = v);
   set haptics(bool v) => _set(() => _haptics = v);
@@ -42,6 +56,8 @@ class AsobiSettings extends ChangeNotifier {
     'haptics': _haptics,
     'showPerf': _showPerf,
     'reducedEffects': _reducedEffects,
+    'playerName': _playerName,
+    'relayUrl': _relayUrl,
   };
 
   Future<void> load() async {
@@ -54,6 +70,9 @@ class AsobiSettings extends ChangeNotifier {
         _haptics = json['haptics'] as bool? ?? _haptics;
         _showPerf = json['showPerf'] as bool? ?? _showPerf;
         _reducedEffects = json['reducedEffects'] as bool? ?? _reducedEffects;
+        _playerName = json['playerName'] as String? ?? _playerName;
+        final relay = json['relayUrl'] as String?;
+        if (relay != null && relay.isNotEmpty) _relayUrl = relay;
         notifyListeners();
       }
     } on FormatException {

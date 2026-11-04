@@ -44,7 +44,11 @@ class QuadPongCartridge extends FlameCartridge<QuadPongGame> {
 }
 
 class QuadPongGame extends AsobiFlameGame with MultiTouchDragDetector {
-  QuadPongGame(super.session, {this.seed});
+  QuadPongGame(super.session, {this.seed}) {
+    // Launched from a same-phone party: one edge per person, CPUs fill the rest.
+    final match = session.context.match;
+    if (match != null) start(match.playerCount.clamp(1, 4));
+  }
 
   final int? seed;
   PongWorld? court;

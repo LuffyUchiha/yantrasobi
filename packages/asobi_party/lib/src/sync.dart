@@ -56,7 +56,7 @@ abstract class _SyncBase {
     _sub = match.events.listen(_onEvent, onDone: () => _out.close());
   }
 
-  final Match match;
+  final PartyMatch match;
   late final StreamSubscription<MatchEvent> _sub;
   final StreamController<SyncEvent> _out = StreamController<SyncEvent>.broadcast(sync: true);
   bool _desynced = false;

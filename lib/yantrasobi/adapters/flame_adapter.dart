@@ -20,6 +20,9 @@ abstract class AsobiFlameGame extends FlameGame {
   /// Number of live simulated entities, for the perf overlay.
   int get entityCount => 0;
 
+  /// Score so far in the current run, sent to opponents in a party race.
+  int get liveScore => 0;
+
   /// Device safe-area insets (status bar, gesture bar), set by the adapter so
   /// HUDs can avoid the host's pause button and system UI.
   EdgeInsets safePadding = EdgeInsets.zero;
@@ -57,6 +60,9 @@ class FlameCartridgeSession<G extends AsobiFlameGame> extends CartridgeSession {
 
   @override
   int get entityCount => _game?.entityCount ?? 0;
+
+  @override
+  int get liveScore => _game?.liveScore ?? 0;
 
   @override
   void onStart() => _game = _factory(this);

@@ -31,7 +31,7 @@ nothing about it changes.
 │ Library ── PartyController ──────┼─ WS ──▶│ rooms by code         │◀─ WS ──┼── PartyController ── Library  │
 │   │          │ eligible games     │        │ assigns ids, keeps    │        │        │                      │
 │   ▼          ▼ matches            │        │ join order, forwards  │        │        ▼                      │
-│ CartridgeHost ─ Match ─ sync helper│        │ JSON. No game logic.  │        │ Match ─ sync helper ─ Host    │
+│ CartridgeHost ─ PartyMatch ─ sync helper│        │ JSON. No game logic.  │        │ PartyMatch ─ sync helper ─ Host    │
 └──────────────────────────────────┘        └───────────────────────┘        └───────────────────────────────┘
 ```
 
@@ -42,7 +42,7 @@ on its own (`dart test`, 28 tests).
 |---|---|---|
 | `MultiplayerSpec`, `eligibleGames` | `lib/src/spec.dart` | What a cartridge supports. Builds the shrunk library |
 | `RoomLink`, `RoomRegistry`, `LoopbackRelay` | `lib/src/room.dart` | Transport seam. The in-memory relay is used for tests and offline demos |
-| `PartyController`, `Match` | `lib/src/party.dart` | Lobby, host, ready-up, start, shared seed, seats, results, host migration, forfeits |
+| `PartyController`, `PartyMatch` | `lib/src/party.dart` | Lobby, host, ready-up, start, shared seed, seats, results, host migration, forfeits |
 | `ParallelRace`, `TurnSync`, `Lockstep` | `lib/src/sync.dart` | In-match sync, plus desync detection |
 | `RelayServer`, `WebSocketRoomLink` | `lib/io.dart`, `bin/relay.dart`, `Dockerfile` | Network relay and client (dart:io) |
 
@@ -55,7 +55,7 @@ phones, and every phone computes them the same way from the same messages. This 
   (`dart compile exe`) and runs on any small VM or container service behind TLS (`wss://`).
 * Another realtime backend can replace it later by implementing `RoomLink`: Firebase RTDB, Supabase
   Realtime, Nakama, or LAN via Nearby Connections.
-* Same-device parties use the exact same `Match` and sync-helper API, with no network involved.
+* Same-device parties use the exact same `PartyMatch` and sync-helper API, with no network involved.
 
 Trust model: **friends only.** Clients trust each other's inputs. The relay limits frame size (16 KB) and
 message rate (120/s per connection), and caps rooms at 8. Ranked play against strangers would need
@@ -73,46 +73,41 @@ server-side game logic and is out of scope.
   `null` while waiting on the network. Local input is scheduled `inputDelayTicks` ahead to hide
   latency. Optional `checksum(tick, hash)` catches simulations that have drifted apart.
 
-## Console integration (to do in the app, once the console code lands on `main`)
+## Console integration (done)
 
-This branch adds only the package and documents. The console framework (`lib/yantrasobi/...`) is being
-written in a parallel session and isn't on GitHub yet, so the edits below are the plan for wiring it in.
-None of these edits are on this branch yet.
+| Piece | Where |
+|---|---|
+| `CartridgeManifest.multiplayer` (a `MultiplayerSpec`), plus `partySpec`, which falls back to a same-phone-only spec for `localMultiplayer` cartridges | `lib/yantrasobi/cartridge/manifest.dart` |
+| `CartridgeContext.match` and `matchSeed`; `liveScore` on `CartridgeSession` and `AsobiFlameGame` | `cartridge.dart`, `flame_adapter.dart` |
+| `AsobiParty` service (one party at a time, eligible ids, match stream) | `lib/yantrasobi/party/party_service.dart`, exposed as `AsobiServices.party` |
+| `WsRoomLink`: the relay protocol over `web_socket_channel` (Android, iOS, web) | `lib/yantrasobi/party/ws_room_link.dart` |
+| Play together sheet, party banner, lobby bar (pick, Ready, START) | `lib/yantrasobi/ui/party_sheet.dart`, `library_screen.dart` |
+| Match in the host: race strip with opponents' live scores, result reporting, forfeit on exit, standings, no restart online | `lib/yantrasobi/runtime/cartridge_host.dart` |
+| Player name and relay address | Settings → Play together (`AsobiSettings.playerName`, `relayUrl`; build default `--dart-define=YANTRASOBI_RELAY=wss://…`) |
+| Tests | `test/yantrasobi/party_flow_test.dart` (UI flows over the in-memory relay), `test/yantrasobi/ws_room_link_test.dart` (app transport against the real relay) |
 
-1. **Dependency.** In the app's `pubspec.yaml`, add `asobi_party: {path: packages/asobi_party}` and
-   `web_socket_channel`.
-2. **Manifest.** Add `final MultiplayerSpec? multiplayer;` (default `null`) to `CartridgeManifest`, plus
-   `validate()` → `...?multiplayer?.validate()`, and `toJson()` → `'multiplayer': multiplayer?.toJson()`.
-   The field is additive, so no change to `kCartridgeApiVersion` is needed. Example:
-   ```dart
-   multiplayer: MultiplayerSpec(sync: SyncModel.parallel, maxPlayers: 8, sameDevice: false,
-       summary: 'Same tower, highest floor wins'),
-   ```
-3. **Context.** Add `final Match? match;` to `CartridgeContext`. Cartridges seed their world with
-   `ctx.match?.seed ?? DateTime.now().microsecondsSinceEpoch`.
-4. **Host glue (`CartridgeHost`).**
-   * When the session ends and `match != null`, call `match.finish(score: r.score, won: r.won)`.
-     For parallel cartridges this one hook is all the host needs.
-   * Add `int get liveScore => 0;` to `AsobiFlameGame`. For `SyncModel.parallel`, the host owns a
-     `ParallelRace`, calls `report(score: game.liveScore)` every frame (the race throttles it), and draws
-     a small opponent strip (name, score, alive) under the pause row. This means a parallel cartridge
-     needs **no networking code at all**.
-   * Pause doesn't pause other phones. In a match, the pause button becomes "Forfeit".
-5. **Library.** Add an `AsobiParty` service to `AsobiServices`, holding `PartyController?`. When it's
-   non-null:
-   * filter the catalog to `party.eligible`,
-   * show the party banner,
-   * on the detail screen, show **Pick for party** (host) or **Ready** (guest),
-   * listen to `party.matches` and push `CartridgeHost` with the match.
+### What plays together today
 
-   `GameEntry`s are built from the catalog as `GameEntry(m.id, m.version, m.multiplayer)`.
-6. **Transport in the app.** Write a ~60-line `RoomLink` on top of `web_socket_channel` that speaks the
-   same JSON as `io.dart`. That works on Android, iOS and web. `WebSocketRoomLink` in `io.dart` stays as
-   the reference implementation and test client. The relay URL goes in settings, with a build-time default.
-7. **Profile.** Store a display name in settings, asked for once the first time the player opens
-   Play together, and keep a local list of recent party members. No accounts.
-8. **Tests.** A console flow test that drives two `PartyController`s over a `LoopbackRelay` through
-   the real library UI: party, filtered list, start, results.
+* **Online races (parallel), 2–8 phones:** Arrow Survivor, Blade Toss, Cloud Tower, Dodge Lane, Edge Dash,
+  Gulp Hole, Coil Clash. Everyone gets the same seed and races their own copy, with opponents' scores
+  live at the top right.
+* **Same phone:** Puck Duel (2 players) and Quad Pong (2–4 players). When launched from a party, they skip
+  their mode menu.
+
+### Making another cartridge party-ready
+
+* **Race:** the world must depend only on the seed (not on a saved level). Then:
+  * add `multiplayer: MultiplayerSpec(sync: SyncModel.parallel, maxPlayers: 8, summary: '…')` to the
+    manifest,
+  * pass `seed: session.context.matchSeed` in `createGame`,
+  * override `int get liveScore`.
+
+  The host does the networking.
+* **Same phone:** set `maxPlayers` and `localMultiplayer: true`. If `session.context.match` is set,
+  start straight in the multi-human mode, with `match.playerCount` humans.
+* **Real-time shared arena (lockstep) or turn-based online:** drive the world's `setInput` through
+  `Lockstep.step()` / `TurnSync.submit()` from `ctx.match`. No cartridge does this yet. Coil Clash,
+  Ink Claim and Gulp Hole arenas are the natural first candidates (see `research/MULTIPLAYER_CATALOG.md`).
 
 ## Running the relay
 
@@ -124,4 +119,7 @@ cd packages/asobi_party && dart run bin/relay.dart        # PORT=8787 by default
 docker build -t yantrasobi-relay packages/asobi_party && docker run -p 8787:8787 yantrasobi-relay
 ```
 
-Phones connect to `wss://<host>/v1/party`.
+Phones connect to `wss://<host>/v1/party`. In the app, enter the address under Settings → Play together.
+For a quick home test, run the relay on a laptop and enter `<laptop LAN IP>:8787` on each phone. That
+uses plain `ws://`, so Android needs cleartext traffic allowed for that address. Use `wss://` for
+anything public.

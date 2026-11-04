@@ -1,3 +1,4 @@
+import 'package:asobi_party/asobi_party.dart';
 import 'package:flutter/widgets.dart';
 
 /// Version of the cartridge contract implemented by Yantrasobi.
@@ -51,6 +52,7 @@ class CartridgeManifest {
     this.maturity = CartridgeMaturity.complete,
     this.maxPlayers = 1,
     this.localMultiplayer = false,
+    this.multiplayer,
   });
 
   /// Stable, unique id, lowercase with dashes. Used as the save-slot key.
@@ -83,6 +85,28 @@ class CartridgeManifest {
   /// pass-and-play) without any network.
   final bool localMultiplayer;
 
+  /// How this cartridge plays in a party (see `docs/MULTIPLAYER.md`). Null
+  /// means no online party play; [partySpec] still lists [localMultiplayer]
+  /// cartridges for same-phone parties.
+  final MultiplayerSpec? multiplayer;
+
+  /// What the party library uses: the explicit [multiplayer] spec, or a
+  /// same-phone-only spec derived from [localMultiplayer] and [maxPlayers].
+  MultiplayerSpec? get partySpec =>
+      multiplayer ??
+      (localMultiplayer
+          ? MultiplayerSpec(
+              sync: SyncModel.turnBased,
+              maxPlayers: maxPlayers,
+              online: false,
+              sameDevice: true,
+            )
+          : null);
+
+  /// Largest player count shown on tiles.
+  int get playerCap =>
+      multiplayer != null && multiplayer!.maxPlayers > maxPlayers ? multiplayer!.maxPlayers : maxPlayers;
+
   static final RegExp _idPattern = RegExp(r'^[a-z][a-z0-9-]{1,40}$');
   static final RegExp _semver = RegExp(r'^\d+\.\d+\.\d+$');
 
@@ -102,6 +126,7 @@ class CartridgeManifest {
     if (controls.isEmpty) problems.add('missing control hints');
     if (maxPlayers < 1 || maxPlayers > 8) problems.add('maxPlayers must be 1..8');
     if (localMultiplayer && maxPlayers < 2) problems.add('localMultiplayer needs maxPlayers >= 2');
+    if (multiplayer != null) problems.addAll([for (final p in multiplayer!.validate()) 'multiplayer: $p']);
     return problems;
   }
 
@@ -144,5 +169,6 @@ class CartridgeManifest {
     'maturity': maturity.name,
     'maxPlayers': maxPlayers,
     'localMultiplayer': localMultiplayer,
+    'multiplayer': multiplayer?.toJson(),
   };
 }

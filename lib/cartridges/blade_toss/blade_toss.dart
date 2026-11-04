@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 import 'dart:ui';
 
+import 'package:asobi_party/asobi_party.dart' show MultiplayerSpec, SyncModel;
+
 import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart' show Alignment, Colors, Icons;
 
@@ -35,13 +37,19 @@ class BladeTossCartridge extends FlameCartridge<BladeTossGame> {
     goal:
         'Throw every blade without hitting another one. Score = stage x 100 + blades stuck '
         '+ 25 per gem. One clash ends the run.',
+    multiplayer: MultiplayerSpec(
+      sync: SyncModel.parallel,
+      maxPlayers: 8,
+      summary: 'Same targets for everyone; highest score wins',
+    ),
   );
 
   @override
   CartridgeManifest get manifest => kManifest;
 
   @override
-  BladeTossGame createGame(FlameCartridgeSession<BladeTossGame> session) => BladeTossGame(session);
+  BladeTossGame createGame(FlameCartridgeSession<BladeTossGame> session) =>
+      BladeTossGame(session, seed: session.context.matchSeed);
 }
 
 class BladeTossGame extends AsobiFlameGame {
@@ -74,6 +82,9 @@ class BladeTossGame extends AsobiFlameGame {
 
   @override
   int get entityCount => toss.entityCount + sparks.count + _debris.length;
+
+  @override
+  int get liveScore => toss.score;
 
   @override
   Color backgroundColor() => const Color(0xFF141A26);

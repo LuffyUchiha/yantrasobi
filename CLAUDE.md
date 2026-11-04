@@ -29,9 +29,14 @@ manifest, rules tests. Format, analyze, and test must all pass. Update CARTRIDGE
   They read validated payloads from `CartridgeContext.dataPacks`. Packs must never be able to run code.
 
 ## Multiplayer-ready cartridges
-* Networking is out of scope here; another session owns it. Multiplayer-ready cartridges set
-  `maxPlayers` (and `localMultiplayer` for same-device play).
-* Their rules take player actions only through `setInput(player, input)`, advance in fixed steps, and
+* Party play lives in `packages/asobi_party` (pure Dart) and `lib/yantrasobi/party/`. Design and how-to:
+  `docs/MULTIPLAYER.md`. Game plans: `research/MULTIPLAYER_CATALOG.md`.
+* Online race: add a `MultiplayerSpec(sync: SyncModel.parallel, …)` as `multiplayer:` in the manifest,
+  pass `seed: session.context.matchSeed` in `createGame`, and override `liveScore`. The world must depend
+  only on the seed.
+* Same phone: set `maxPlayers` and `localMultiplayer`. When `session.context.match` is set, start
+  straight in the multi-human mode.
+* Rules take player actions only through `setInput(player, input)`, advance in fixed steps, and
   expose `tick` and `stateHash()` for lockstep desync checks. CPU players feed the same `setInput` API.
 
 ## Working with agents

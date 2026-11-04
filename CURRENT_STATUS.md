@@ -30,7 +30,8 @@ _Updated: 2026-11-04 ~21:00 UTC (session start 20:08 UTC)._
 | Research catalog | DONE (secondary sources) | `research/CATALOG.md` |
 | Cartridge factory | 25 COMPLETE | see CARTRIDGES.md |
 | Declarative data packs (JSON only) | DONE | `docs/DATA_PACKS.md`, `test/yantrasobi/data_pack_test.dart`; Brickfall consumes level packs |
-| Multiplayer-ready metadata | DONE | `CartridgeManifest.maxPlayers/localMultiplayer`; no networking in this branch (another session owns it) |
+| Multiplayer-ready metadata | DONE | `CartridgeManifest.maxPlayers/localMultiplayer` |
+| Play together (parties) | DONE (online races + same phone) | `docs/MULTIPLAYER.md`; `test/yantrasobi/party_flow_test.dart`, `ws_room_link_test.dart`, `packages/asobi_party` (28 tests). No public relay is deployed, and it has not been tried on two real phones |
 
 ## Verification log (latest run)
 | Check | Result |

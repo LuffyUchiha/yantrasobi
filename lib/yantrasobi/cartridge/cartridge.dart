@@ -1,3 +1,4 @@
+import 'package:asobi_party/asobi_party.dart';
 import 'package:flutter/widgets.dart';
 
 import '../services/audio.dart';
@@ -31,6 +32,7 @@ class CartridgeContext {
     required this.settings,
     this.onSaveChanged,
     this.dataPacks = const [],
+    this.match,
   });
 
   final CartridgeManifest manifest;
@@ -46,6 +48,15 @@ class CartridgeContext {
 
   /// Validated data-pack payloads addressed to this cartridge (JSON maps).
   final List<Map<String, Object?>> dataPacks;
+
+  /// The party match this run belongs to, or null for normal solo play.
+  /// Cartridges seed their world with [match]'s seed so every phone plays the
+  /// same world; the host reports results and live scores for them.
+  final PartyMatch? match;
+
+  /// Seed to use for a run: the shared match seed in a party, otherwise null
+  /// (the cartridge picks its own).
+  int? get matchSeed => match?.seed;
 
   void commitSave() => onSaveChanged?.call();
 }
@@ -141,6 +152,10 @@ abstract class CartridgeSession extends ChangeNotifier {
 
   /// Live entity count for the performance overlay (0 if not tracked).
   int get entityCount => 0;
+
+  /// Current score while a run is in progress, shown to the other players
+  /// in a party race (0 if the cartridge doesn't report one).
+  int get liveScore => 0;
 
   // Template hooks for adapters / cartridges.
   @protected
