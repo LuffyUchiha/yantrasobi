@@ -22,6 +22,10 @@ detail, launch, pause, resume, Android back (pauses), restart, a drag across the
 | 8 | Tube Sort (`tube-sort`) | Flame 2D | colour sorting (solver-checked) | COMPLETE | 9 | `tube_sort_web.png` |
 | 9 | Gridlock (`gridlock`) | Flame 2D | traffic-escape puzzle | COMPLETE | 14 | – |
 | 10 | Merge Bastion (`merge-bastion`) | Flame 2D | merge defence | COMPLETE | 13 | `merge_bastion_web.png` |
+| 11 | Mob Magnet (`mob-magnet`) | flutter_scene 3D | crowd collecting in a city | COMPLETE | 11 | `mob_magnet_3d_web.png` |
+| 12 | Dodge Lane (`dodge-lane`) | Flame 2D (pseudo-3D) | endless lane dodger | COMPLETE | 15 | `dodge_lane_web.png` |
+| 13 | Deep Dig (`deep-dig`) | Flame 2D | idle mining manager (offline earnings) | COMPLETE | 15 | `deep_dig_web.png` |
+| 14 | Ball Pour (`ball-pour`) | Flame 2D + custom circle physics | cup/ball physics | COMPLETE | 16 | `ball_pour_web.png` |
 
 Not verified anywhere: real Android devices (none available). APKs are built only in CI, and that is
 unverified while pushes to GitHub fail (see CURRENT_STATUS.md).
@@ -98,3 +102,31 @@ unverified while pushes to GitHub fail (see CURRENT_STATUS.md).
   * Merge twins up to tier 8.
   * Boss every 5th wave.
 * **Balance:** a bot that summons and merges wins level 1 on 20 of 20 seeds. Idling loses by wave 3.
+
+### Mob Magnet (3D)
+* **Goal:** have the largest mob after 75 s, or absorb every rival leader.
+* **Controls:** joystick.
+* **Systems:**
+  * Up to 420 people drawn as one per-instance-coloured `InstancedMesh`.
+  * Spatial hash for contacts.
+  * 3 bot mobs that flee bigger mobs and chase smaller ones.
+  * The camera pulls back as the mob grows.
+
+### Dodge Lane
+* **Goal:** an endless run for score (distance, coins, near misses). One unshielded hit ends it.
+* **Controls:** swipe sideways, up to jump, down to duck.
+* **Systems:** every generated row passes a reachability validator. Pickups are shield, magnet, and slow-mo.
+
+### Deep Dig
+* **Goal:** hit the contract cash milestone ($1M, then $10M, and so on). There is no losing; exit anytime.
+* **Systems:**
+  * Shafts, a lift, and a hauler, each tapped manually or automated with a foreman.
+  * Upgrade costs grow ×1.15 per level.
+  * Offline earnings, capped at 2 h, are saved in the cartridge save.
+
+### Ball Pour
+* **Goal:** settle the target number of balls in the cup.
+* **Controls:** hold to open the gate; drag planks along their rails.
+* **Systems:**
+  * Custom deterministic circle-and-segment physics with a fixed step and a speed cap (no tunnelling).
+  * 10 authored levels as declarative data, then a looping harder variant.

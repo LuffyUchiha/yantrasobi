@@ -22,24 +22,25 @@ _Updated: 2026-11-04 ~21:00 UTC (session start 20:08 UTC)._
 | Bootstrap (project, docs, CI file) | DONE | analyze clean, tests green locally; CI not yet run (push blocked) |
 | Console: library/search/filter/detail/settings/host | DONE | `test/yantrasobi/console_flow_test.dart`, `docs/screenshots/library*.png` |
 | Cartridge API v1, registry, saves, settings, audio | DONE | `test/yantrasobi/core_test.dart` |
-| Flame adapter | DONE | 8 Flame cartridges |
+| Flame adapter | DONE | 11 Flame cartridges |
+| Widget adapter | DONE | `lib/yantrasobi/adapters/widget_adapter.dart` |
 | flutter_scene adapter + canvas fallback | DONE | Crowd Forge and Spiral Drop render in Chromium WebGL2 |
 | Crowd Forge (3D reference) | COMPLETE | 14 tests + web capture |
 | Arrow Survivor (2D reference) | COMPLETE | 9 tests + web capture |
 | Research catalog | DONE (secondary sources) | `research/CATALOG.md` |
-| Cartridge factory | 10 COMPLETE | see CARTRIDGES.md |
+| Cartridge factory | 14 COMPLETE | see CARTRIDGES.md |
 
 ## Verification log (latest run)
 | Check | Result |
 |---|---|
 | `dart format --set-exit-if-changed lib test` | clean |
 | `flutter analyze` | No issues found |
-| `flutter test` | 146 passed, 0 failed |
+| `flutter test` (committed cartridges) | all passed (the full run also includes the in-progress Pocket Quest) |
 | `flutter build web --release` | succeeds (about 60–150 s) |
 | `flutter build apk` | not runnable locally (no Android SDK); CI only, never run because pushes fail |
 
 ## In progress
-* More cartridges in the factory: Deep Dig (idle miner), Ball Pour (cup/ball physics), Dodge Lane (obstacle dodge).
+* Pocket Quest (text roguelike on the widget adapter) is in progress.
 
 ## Known gaps
 * Never run on a phone. Touch is exercised by widget tests and by mouse-driven Chromium captures only.

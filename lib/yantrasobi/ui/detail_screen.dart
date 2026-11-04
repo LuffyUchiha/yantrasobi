@@ -67,6 +67,20 @@ class _CartridgeDetailScreenState extends State<CartridgeDetailScreen> {
           ),
         ],
       ),
+      bottomNavigationBar: SafeArea(
+        minimum: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+        child: FilledButton.icon(
+          key: const Key('detail.play'),
+          style: FilledButton.styleFrom(
+            backgroundColor: m.accent,
+            foregroundColor: Colors.black,
+            minimumSize: const Size.fromHeight(58),
+          ),
+          onPressed: _play,
+          icon: const Icon(Icons.play_arrow_rounded, size: 30),
+          label: const Text('PLAY', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+        ),
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -92,18 +106,6 @@ class _CartridgeDetailScreenState extends State<CartridgeDetailScreen> {
               _pill('v${m.version}'),
               if (m.maturity != CartridgeMaturity.complete) _pill(m.maturity.name),
             ],
-          ),
-          const SizedBox(height: 16),
-          FilledButton.icon(
-            key: const Key('detail.play'),
-            style: FilledButton.styleFrom(
-              backgroundColor: m.accent,
-              foregroundColor: Colors.black,
-              minimumSize: const Size.fromHeight(56),
-            ),
-            onPressed: _play,
-            icon: const Icon(Icons.play_arrow_rounded, size: 30),
-            label: const Text('PLAY', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
           ),
           const SizedBox(height: 16),
           Row(

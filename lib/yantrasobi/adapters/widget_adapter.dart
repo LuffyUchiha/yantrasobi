@@ -48,8 +48,10 @@ class WidgetCartridgeSession extends CartridgeSession {
   void onDispose() => _paused.dispose();
 
   @override
-  Widget buildView(BuildContext context) =>
-      KeyedSubtree(key: _key, child: Builder(builder: (context) => _builder(context, this)));
+  Widget buildView(BuildContext context) => KeyedSubtree(
+    key: _key,
+    child: Builder(builder: (context) => _builder(context, this)),
+  );
 }
 
 abstract class WidgetCartridge extends Cartridge {

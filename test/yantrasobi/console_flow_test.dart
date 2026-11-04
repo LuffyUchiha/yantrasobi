@@ -47,6 +47,8 @@ void main() {
         200,
         scrollable: find.byType(Scrollable).last,
       );
+      await tester.ensureVisible(find.byKey(Key('library.tile.$id')));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(Key('library.tile.$id')));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('detail.play')));
