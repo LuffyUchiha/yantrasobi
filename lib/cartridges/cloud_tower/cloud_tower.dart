@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 import 'dart:ui';
 
+import 'package:asobi_party/asobi_party.dart' show MultiplayerSpec, SyncModel;
+
 import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart' show Alignment, Colors, HSLColor, Icons;
 
@@ -43,13 +45,19 @@ class CloudTowerCartridge extends FlameCartridge<CloudTowerGame> {
     goal:
         'Stack as high as you can. A drop that misses the tower ends the run. '
         'Score = floors + perfect-streak bonuses.',
+    multiplayer: MultiplayerSpec(
+      sync: SyncModel.parallel,
+      maxPlayers: 8,
+      summary: 'Same tower for everyone; highest score wins',
+    ),
   );
 
   @override
   CartridgeManifest get manifest => kManifest;
 
   @override
-  CloudTowerGame createGame(FlameCartridgeSession<CloudTowerGame> session) => CloudTowerGame(session);
+  CloudTowerGame createGame(FlameCartridgeSession<CloudTowerGame> session) =>
+      CloudTowerGame(session, seed: session.context.matchSeed);
 }
 
 class CloudTowerGame extends AsobiFlameGame {
@@ -105,6 +113,9 @@ class CloudTowerGame extends AsobiFlameGame {
 
   @override
   int get entityCount => tower.entityCount + sparks.count;
+
+  @override
+  int get liveScore => tower.score;
 
   @override
   void onGameResize(Vector2 size) {

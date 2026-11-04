@@ -70,7 +70,10 @@ const List<_MenuOption> _menu = [
 
 class PuckDuelGame extends AsobiFlameGame with MultiTouchDragDetector {
   PuckDuelGame(super.session, {this.seed})
-    : duel = PuckWorld(seed: seed ?? DateTime.now().microsecondsSinceEpoch & 0x3fffffff);
+    : duel = PuckWorld(seed: seed ?? DateTime.now().microsecondsSinceEpoch & 0x3fffffff) {
+    // Launched from a same-phone party: both people are already here.
+    if (session.context.match != null) startMatch(twoPlayer: true);
+  }
 
   final int? seed;
   final PuckWorld duel;

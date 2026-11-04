@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 import 'dart:ui';
 
+import 'package:asobi_party/asobi_party.dart' show MultiplayerSpec, SyncModel;
+
 import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart' show Alignment, Colors, Icons;
 
@@ -49,13 +51,19 @@ class CoilClashCartridge extends FlameCartridge<CoilClashGame> {
         'Be the longest serpent alive when the 3-minute round ends. Touching another body or '
         'the arena rim ends your run. Score = best length + 50 per kill.',
     maxPlayers: 8,
+    multiplayer: MultiplayerSpec(
+      sync: SyncModel.parallel,
+      maxPlayers: 8,
+      summary: 'Same arena for everyone; highest score wins',
+    ),
   );
 
   @override
   CartridgeManifest get manifest => kManifest;
 
   @override
-  CoilClashGame createGame(FlameCartridgeSession<CoilClashGame> session) => CoilClashGame(session);
+  CoilClashGame createGame(FlameCartridgeSession<CoilClashGame> session) =>
+      CoilClashGame(session, seed: session.context.matchSeed);
 }
 
 class CoilClashGame extends AsobiFlameGame {
@@ -116,6 +124,9 @@ class CoilClashGame extends AsobiFlameGame {
 
   @override
   int get entityCount => coil.entityCount + sparks.count;
+
+  @override
+  int get liveScore => coil.score;
 
   @override
   Color backgroundColor() => const Color(0xFF07060F);

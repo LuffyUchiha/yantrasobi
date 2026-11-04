@@ -17,7 +17,7 @@ final games = [
 ];
 
 /// Starts [gameId] for [n] online players over [relay]; returns one match per phone.
-Future<List<Match>> startOnline(LoopbackRelay relay, String gameId, int n) async {
+Future<List<PartyMatch>> startOnline(LoopbackRelay relay, String gameId, int n) async {
   Future<void> settle() async {
     await pumpEventQueue(times: 50);
     if (relay.latency > Duration.zero) await Future<void>.delayed(relay.latency * 3);

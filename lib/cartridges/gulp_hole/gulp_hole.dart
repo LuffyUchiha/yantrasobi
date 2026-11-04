@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 import 'dart:ui';
 
+import 'package:asobi_party/asobi_party.dart' show MultiplayerSpec, SyncModel;
+
 import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart' show Alignment, Colors, Icons;
 
@@ -35,13 +37,19 @@ class GulpHoleCartridge extends FlameCartridge<GulpHoleGame> {
     goal:
         'Be the biggest hole when the 90 s timer ends, or swallow 60% of the city. '
         'Holes 20% smaller than you can be gulped - so can you.',
+    multiplayer: MultiplayerSpec(
+      sync: SyncModel.parallel,
+      maxPlayers: 8,
+      summary: 'Same city for everyone; highest score wins',
+    ),
   );
 
   @override
   CartridgeManifest get manifest => kManifest;
 
   @override
-  GulpHoleGame createGame(FlameCartridgeSession<GulpHoleGame> session) => GulpHoleGame(session);
+  GulpHoleGame createGame(FlameCartridgeSession<GulpHoleGame> session) =>
+      GulpHoleGame(session, seed: session.context.matchSeed);
 }
 
 class GulpHoleGame extends AsobiFlameGame {
@@ -76,6 +84,9 @@ class GulpHoleGame extends AsobiFlameGame {
 
   @override
   int get entityCount => (_world?.entityCount ?? 0) + sparks.count;
+
+  @override
+  int get liveScore => _world?.score ?? 0;
 
   static Color holeColor(Hole h) => h.isPlayer ? kAccent : _rivalColors[(h.id - 1) % _rivalColors.length];
 

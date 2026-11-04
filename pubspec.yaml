@@ -39,6 +39,9 @@ dependencies:
   audioplayers: ^6.8.1
   flutter_scene: 0.24.3
   vector_math: ^2.4.4
+  asobi_party:
+    path: packages/asobi_party
+  web_socket_channel: ^3.0.3
 
 dev_dependencies:
   flutter_test:

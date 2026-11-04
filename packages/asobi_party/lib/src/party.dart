@@ -49,12 +49,12 @@ class SeatResult {
   Map<String, Object?> toJson() => {'seat': seat, 'score': score, 'won': won, 'forfeit': forfeit};
 }
 
-/// Everything that can arrive on a [Match] channel.
+/// Everything that can arrive on a [PartyMatch] channel.
 sealed class MatchEvent {
   const MatchEvent();
 }
 
-/// Game data sent by another seat with [Match.send].
+/// Game data sent by another seat with [PartyMatch.send].
 class MatchData extends MatchEvent {
   const MatchData(this.seat, this.body);
   final int seat;
@@ -80,8 +80,8 @@ class MatchOver extends MatchEvent {
 /// A running multiplayer game. Handed to the cartridge alongside its normal
 /// single-player context; [seed] replaces the cartridge's own random seed so
 /// every copy generates the same world.
-class Match {
-  Match._({
+class PartyMatch {
+  PartyMatch._({
     required this.id,
     required this.gameId,
     required this.seed,
@@ -247,20 +247,20 @@ class PartyController {
   final List<String> _order = [];
   final Map<String, PartyMember> _members = {};
   String? _selected;
-  Match? _match;
+  PartyMatch? _match;
   List<SeatResult>? _lastStandings;
   String? _closeReason;
   final Map<String, List<(String, Map<String, Object?>)>> _early = {};
 
   final StreamController<void> _changes = StreamController<void>.broadcast();
-  final StreamController<Match> _matches = StreamController<Match>.broadcast();
+  final StreamController<PartyMatch> _matches = StreamController<PartyMatch>.broadcast();
 
   /// Fires whenever anything visible in the lobby changes.
   Stream<void> get changes => _changes.stream;
 
   /// Fires once per match start on every member. The console reacts by
   /// launching the cartridge with this match attached.
-  Stream<Match> get matches => _matches.stream;
+  Stream<PartyMatch> get matches => _matches.stream;
 
   PartyPhase get phase => _phase;
 
@@ -276,7 +276,7 @@ class PartyController {
   PartyShape get shape => PartyShape(_order.length, connection);
 
   String? get selectedGameId => _selected;
-  Match? get match => _match;
+  PartyMatch? get match => _match;
   List<SeatResult>? get lastStandings => _lastStandings;
 
   Map<String, String> get _localGames => {for (final g in _catalog) g.id: g.version};
@@ -330,7 +330,7 @@ class PartyController {
   }
 
   /// Host only: start the selected game for everyone. Returns the local match.
-  Match start() {
+  PartyMatch start() {
     if (!canStart) throw StateError('Cannot start: pick an eligible game and wait for everyone');
     final matchId = '${DateTime.now().microsecondsSinceEpoch.toRadixString(36)}${_random.nextInt(1 << 20)}';
     final seed = _random.nextInt(1 << 31);
@@ -355,7 +355,7 @@ class PartyController {
 
   // ----------------------------------------------------------------- match
 
-  Match _beginMatch(String matchId, String gameId, int seed, List<String> seatIds) {
+  PartyMatch _beginMatch(String matchId, String gameId, int seed, List<String> seatIds) {
     final spec = _catalog.firstWhere((g) => g.id == gameId).spec!;
     final seats = [
       for (var i = 0; i < seatIds.length; i++)
@@ -366,8 +366,8 @@ class PartyController {
           peerId: connection == Connection.online ? seatIds[i] : null,
         ),
     ];
-    late final Match match;
-    match = Match._(
+    late final PartyMatch match;
+    match = PartyMatch._(
       id: matchId,
       gameId: gameId,
       seed: seed,
@@ -412,7 +412,7 @@ class PartyController {
     _changed();
   }
 
-  int? _seatOf(Match m, String peerId) {
+  int? _seatOf(PartyMatch m, String peerId) {
     for (final s in m.seats) {
       if (s.peerId == peerId) return s.index;
     }

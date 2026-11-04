@@ -46,6 +46,43 @@ class SettingsScreen extends StatelessWidget {
               onChanged: (v) => s.reducedEffects = v,
             ),
             const Divider(),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: Text(
+                'PLAY TOGETHER',
+                style: TextStyle(fontSize: 12, letterSpacing: 1.4, color: Colors.white54),
+              ),
+            ),
+            ListTile(
+              key: const Key('settings.playerName'),
+              leading: const Icon(Icons.badge_rounded),
+              title: const Text('Your name'),
+              subtitle: Text(s.playerName.isEmpty ? 'Shown to friends in a party' : s.playerName),
+              onTap: () async {
+                final v = await _editText(context, 'Your name', s.playerName, hint: 'Asha');
+                if (v != null) s.playerName = v;
+              },
+            ),
+            ListTile(
+              key: const Key('settings.relay'),
+              leading: const Icon(Icons.dns_rounded),
+              title: const Text('Party relay'),
+              subtitle: Text(
+                s.relayUrl.isEmpty
+                    ? 'Not set · needed to play across phones (see docs/MULTIPLAYER.md)'
+                    : s.relayUrl,
+              ),
+              onTap: () async {
+                final v = await _editText(
+                  context,
+                  'Party relay address',
+                  s.relayUrl,
+                  hint: 'wss://party.example.com or 192.168.1.20:8787',
+                );
+                if (v != null) s.relayUrl = v;
+              },
+            ),
+            const Divider(),
             ListTile(
               key: const Key('settings.packs'),
               leading: const Icon(Icons.extension_rounded),
@@ -69,4 +106,29 @@ class SettingsScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<String?> _editText(BuildContext context, String title, String initial, {String? hint}) {
+  final controller = TextEditingController(text: initial);
+  return showDialog<String>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: Text(title),
+      content: TextField(
+        key: const Key('settings.editField'),
+        controller: controller,
+        autofocus: true,
+        decoration: InputDecoration(hintText: hint),
+        onSubmitted: (v) => Navigator.pop(ctx, v),
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+        FilledButton(
+          key: const Key('settings.editSave'),
+          onPressed: () => Navigator.pop(ctx, controller.text),
+          child: const Text('Save'),
+        ),
+      ],
+    ),
+  ).whenComplete(controller.dispose);
 }

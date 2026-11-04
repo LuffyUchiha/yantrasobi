@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 import 'dart:ui';
 
+import 'package:asobi_party/asobi_party.dart' show MultiplayerSpec, SyncModel;
+
 import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart' show Alignment, Colors, Icons;
 
@@ -32,6 +34,11 @@ class ArrowSurvivorCartridge extends FlameCartridge<ArrowSurvivorGame> {
     controls: ['Drag anywhere: virtual joystick to move', 'Tap a card to pick an upgrade'],
     mechanics: ['auto-attack', 'waves', 'upgrade cards', 'bosses'],
     goal: 'Survive all 10 waves. Upgrades between waves; hearts restore HP.',
+    multiplayer: MultiplayerSpec(
+      sync: SyncModel.parallel,
+      maxPlayers: 8,
+      summary: 'Same waves for everyone; highest score wins',
+    ),
   );
 
   @override
@@ -39,7 +46,7 @@ class ArrowSurvivorCartridge extends FlameCartridge<ArrowSurvivorGame> {
 
   @override
   ArrowSurvivorGame createGame(FlameCartridgeSession<ArrowSurvivorGame> session) =>
-      ArrowSurvivorGame(session);
+      ArrowSurvivorGame(session, seed: session.context.matchSeed);
 }
 
 class ArrowSurvivorGame extends AsobiFlameGame {
@@ -57,6 +64,9 @@ class ArrowSurvivorGame extends AsobiFlameGame {
 
   @override
   int get entityCount => (_world?.entityCount ?? 0) + sparks.count;
+
+  @override
+  int get liveScore => _world?.score ?? 0;
 
   @override
   void onGameResize(Vector2 size) {
