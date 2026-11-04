@@ -9,6 +9,7 @@ import 'crowd_forge/crowd_forge.dart';
 import 'curve_kick/curve_kick.dart';
 import 'deep_dig/deep_dig.dart';
 import 'dodge_lane/dodge_lane.dart';
+import 'edge_dash/edge_dash.dart';
 import 'gridlock/gridlock.dart';
 import 'gulp_hole/gulp_hole.dart';
 import 'ink_claim/ink_claim.dart';
@@ -16,8 +17,10 @@ import 'jam_tray/jam_tray.dart';
 import 'merge_bastion/merge_bastion.dart';
 import 'mob_magnet/mob_magnet.dart';
 import 'pocket_quest/pocket_quest.dart';
+import 'puck_duel/puck_duel.dart';
 import 'roll_ridge/roll_ridge.dart';
 import 'serpent_loop/serpent_loop.dart';
+import 'shatter_run/shatter_run.dart';
 import 'spiral_drop/spiral_drop.dart';
 import 'swing_hook/swing_hook.dart';
 import 'stack_runner/stack_runner.dart';
@@ -33,6 +36,7 @@ List<Cartridge> bundledCartridges() => const [
   SpiralDropCartridge(),
   MobMagnetCartridge(),
   RollRidgeCartridge(),
+  ShatterRunCartridge(),
   GulpHoleCartridge(),
   JamTrayCartridge(),
   StackRunnerCartridge(),
@@ -49,6 +53,8 @@ List<Cartridge> bundledCartridges() => const [
   CloudTowerCartridge(),
   CurveKickCartridge(),
   SwingHookCartridge(),
+  EdgeDashCartridge(),
+  PuckDuelCartridge(),
 ];
 
 CartridgeRegistry buildRegistry() => CartridgeRegistry(bundledCartridges());

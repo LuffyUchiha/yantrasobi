@@ -34,6 +34,9 @@ detail, launch, pause, resume, Android back (pauses), restart, a drag across the
 | 20 | Cloud Tower (`cloud-tower`) | Flame 2D (isometric) | tap-timing slab stacking | COMPLETE | 14 | `cloud_tower_web.png` |
 | 21 | Curve Kick (`curve-kick`) | Flame 2D | draw-the-path football moments | COMPLETE | 12 | `curve_kick_web.png` |
 | 22 | Swing Hook (`swing-hook`) | Flame 2D | grapple swinging | COMPLETE | 17 | `swing_hook_web.png` |
+| 23 | Shatter Run (`shatter-run`) | flutter_scene 3D | corridor glass breaking, ball economy | COMPLETE | 10 | `shatter_run_3d_web.png` |
+| 24 | Edge Dash (`edge-dash`) | Flame 2D | swipe-to-dash slicing | COMPLETE | 14 | – |
+| 25 | Puck Duel (`puck-duel`) | Flame 2D | air hockey, **multiplayer-ready** (vs CPU or 2 on one device) | COMPLETE | 15 | – |
 
 Not verified anywhere: real Android devices (none available). APKs are built only in CI, and that is
 unverified while pushes to GitHub fail (see CURRENT_STATUS.md).
@@ -204,3 +207,24 @@ unverified while pushes to GitHub fail (see CURRENT_STATUS.md).
   * Spring pads, spikes, pits, moving anchors.
   * Checkpoints with 3 retries.
   * 12 authored levels plus looped variants.
+
+### Shatter Run (3D)
+* **Goal:** go as far as possible.
+* **Controls:** tap to throw steel balls along the camera ray.
+* **Rules:**
+  * Glass walls, doors in solid frames, sliding panels and glass bars all block the corridor.
+  * Crashing into glass costs 10 balls; crystals give +3.
+  * Five instanced draws: walls, panes, crystals, balls, shards.
+
+### Edge Dash
+* **Goal:** survive 12 waves, then beat the boss through its rotating weak spot.
+* **Controls:** swipe to dash; everything on the line is cut.
+* **Foes:** shieldbearers (angle rule), bombers (blast timing), archers.
+
+### Puck Duel (multiplayer-ready)
+* **Goal:** first to 7.
+* **Players:** vs CPU (easy, normal or hard) or 2 players on one device. Fingers are split by screen half, and player 2's HUD is rotated.
+* **Lockstep-ready:**
+  * All moves go through `setInput`.
+  * Fixed 1/120 s step, with `tick` and `stateHash()`.
+  * A test checks 4800 ticks of identical hashes across two worlds.

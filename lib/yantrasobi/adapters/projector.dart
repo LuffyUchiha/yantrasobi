@@ -59,6 +59,13 @@ class Projector {
     return worldSize / (z * _tanY) * size.height / 2;
   }
 
+  /// Unit world-space direction of the camera ray through screen point [s].
+  Vector3 rayDirection(Offset s) {
+    final ndcX = s.dx / size.width * 2 - 1;
+    final ndcY = 1 - s.dy / size.height * 2;
+    return (_forward + _right * (ndcX * _tanY * aspect) + _up2 * (ndcY * _tanY))..normalize();
+  }
+
   /// Intersects the camera ray through screen point [s] with the plane y = [planeY].
   Vector3? unprojectToGround(Offset s, {double planeY = 0}) {
     final ndcX = s.dx / size.width * 2 - 1;
