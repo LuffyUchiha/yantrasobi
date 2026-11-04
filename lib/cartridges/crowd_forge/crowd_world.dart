@@ -58,7 +58,7 @@ class Blade {
 
 class CrowdWorld {
   CrowdWorld({this.level = 1, int seed = 1}) : _rng = math.Random(seed) {
-    forgeMaxHp = 60 + 25 * level;
+    forgeMaxHp = 400 + 150 * level;
     forgeHp = forgeMaxHp;
     _layoutLevel();
     for (var i = 0; i < maxUnits; i++) {
@@ -116,14 +116,14 @@ class CrowdWorld {
   int get score => damageDealt * 10 + foesDefeated * 5 + (phase == CrowdPhase.won ? 500 + baseHp * 25 : 0);
 
   void _layoutLevel() {
-    final mults = [2, 2, 3, 2, 3, 4];
+    final mults = level < 3 ? [2, 2, 3] : [2, 3, 3, 4];
     final rows = math.min(3, 1 + (level + 1) ~/ 2);
     final zs = [9.0, 16.0, 23.0];
     for (var r = 0; r < rows; r++) {
       final z = zs[r];
       if (_rng.nextBool()) {
         // Two side-by-side gates with different multipliers.
-        final a = mults[_rng.nextInt(3)];
+        final a = mults[_rng.nextInt(mults.length)];
         final b = a == 2 ? 3 : 2;
         gates.add(Gate(baseX: -1.6, z: z, multiplier: a));
         gates.add(Gate(baseX: 1.6, z: z, multiplier: b));
@@ -288,8 +288,8 @@ class CrowdWorld {
   void _spawnFoes(double dt) {
     _foeTimer -= dt;
     if (_foeTimer > 0) return;
-    _foeTimer = math.max(0.45, 1.5 - 0.08 * level) * (0.7 + _rng.nextDouble() * 0.6);
-    final group = 1 + _rng.nextInt(math.min(5, 2 + level ~/ 2));
+    _foeTimer = math.max(0.35, 1.1 - 0.07 * level) * (0.7 + _rng.nextDouble() * 0.6);
+    final group = 2 + _rng.nextInt(math.min(6, 2 + level ~/ 2));
     for (var i = 0; i < group; i++) {
       final f = foes.firstWhere((f) => !f.alive, orElse: () => Foe());
       if (!foes.contains(f)) return; // pool exhausted

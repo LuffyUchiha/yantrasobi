@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yantrasobi/cartridges/crowd_forge/crowd_forge.dart';
 import 'package:yantrasobi/cartridges/crowd_forge/crowd_world.dart';
@@ -129,5 +131,27 @@ void main() {
     final hit = pr.unprojectToGround(right)!;
     expect(hit.x, closeTo(2, 1e-6));
     expect(hit.z, closeTo(5, 1e-6));
+  });
+
+  test('pacing: level 1 is not won in 8 seconds of firing, and idling loses', () {
+    final bot = CrowdWorld(level: 1, seed: 11)..firing = true;
+    run(bot, 8);
+    expect(bot.phase, CrowdPhase.playing);
+    final idle = CrowdWorld(level: 1, seed: 11);
+    run(idle, 90);
+    expect(idle.phase, CrowdPhase.lost);
+  });
+
+  test('pacing: a sweeping bot can clear level 1 within two minutes', () {
+    final w = CrowdWorld(level: 1, seed: 5)..firing = true;
+    var t = 0.0;
+    while (!w.isOver && t < 120) {
+      w.aim(math.sin(t * 0.8));
+      w.update(1 / 30);
+      t += 1 / 30;
+    }
+    expect(w.phase, CrowdPhase.won, reason: 'took ${t.toStringAsFixed(1)}s, forge ${w.forgeHp}');
+    // ignore: avoid_print
+    print('level 1 cleared by bot in ${t.toStringAsFixed(1)}s');
   });
 }
