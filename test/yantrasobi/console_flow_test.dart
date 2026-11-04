@@ -23,6 +23,11 @@ void main() {
   testWidgets('library lists every bundled cartridge and search filters', (tester) async {
     await boot(tester);
     for (final c in bundledCartridges()) {
+      await tester.scrollUntilVisible(
+        find.byKey(Key('library.tile.${c.manifest.id}')),
+        200,
+        scrollable: find.byType(Scrollable).last,
+      );
       expect(find.byKey(Key('library.tile.${c.manifest.id}')), findsOneWidget);
     }
     await tester.enterText(find.byKey(const Key('library.search')), 'zzzz-no-match');

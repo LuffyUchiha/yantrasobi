@@ -49,6 +49,7 @@ const server = http.createServer((req, res) => {
     else if (s.action === 'down') { await page.mouse.move(s.x, s.y); await page.mouse.down(); }
     else if (s.action === 'move') { await page.mouse.move(s.x, s.y, { steps: s.steps || 10 }); }
     else if (s.action === 'up') { await page.mouse.up(); }
+    else if (s.action === 'wheel') { await page.mouse.move(s.x || 200, s.y || 500); await page.mouse.wheel(0, s.dy); }
     else if (s.action === 'drag') {
       await page.mouse.move(s.from[0], s.from[1]); await page.mouse.down();
       await page.mouse.move(s.to[0], s.to[1], { steps: 20 });
