@@ -23,3 +23,18 @@
 ## Gate for a COMPLETE cartridge
 Library entry, launch, touch controls, a clear goal, score or win/lose, replay, cleanup,
 manifest, rules tests. Format, analyze, and test must all pass. Update CARTRIDGES.md and CURRENT_STATUS.md.
+
+## Data packs
+* Cartridges can accept JSON content by implementing `DataPackConsumer` (see `docs/DATA_PACKS.md`).
+  They read validated payloads from `CartridgeContext.dataPacks`. Packs must never be able to run code.
+
+## Multiplayer-ready cartridges
+* Networking is out of scope here; another session owns it. Multiplayer-ready cartridges set
+  `maxPlayers` (and `localMultiplayer` for same-device play).
+* Their rules take player actions only through `setInput(player, input)`, advance in fixed steps, and
+  expose `tick` and `stateHash()` for lockstep desync checks. CPU players feed the same `setInput` API.
+
+## Working with agents
+* Agents get `/tmp/.../scratchpad/agent_brief.md`-style briefs and may only touch their own cartridge
+  folder and test file. The integrator registers the cartridge in `catalog.dart`, captures web
+  screenshots, updates the docs, and commits.
