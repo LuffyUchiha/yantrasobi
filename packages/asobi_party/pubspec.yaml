@@ -1,0 +1,14 @@
+name: asobi_party
+description: >-
+  Multiplayer layer for the Yantrasobi console: parties, room links, game
+  eligibility filtering, and match sync helpers (parallel race, turn-based,
+  lockstep). Pure Dart so the Flutter app, tests and the relay server share it.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.7.0
+
+dev_dependencies:
+  lints: ^5.0.0
+  test: ^1.25.0
