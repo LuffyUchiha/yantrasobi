@@ -76,6 +76,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                 _chip('All', null),
                 _chip('2D · Flame', CartridgeEngine.flame2d),
                 _chip('3D · Scene', CartridgeEngine.scene3d),
+                _chip('UI · Widgets', CartridgeEngine.widgets),
               ],
             ),
           ),
@@ -148,7 +149,7 @@ class _CartridgeTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    '${m.genre} · ${m.engine == CartridgeEngine.scene3d ? '3D' : '2D'}'
+                    '${m.genre} · ${m.engineBadge}'
                     '${save != null && save.bestScore > 0 ? ' · best ${save.bestScore}' : ''}',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

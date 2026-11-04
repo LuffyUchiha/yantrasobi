@@ -53,3 +53,46 @@ tuning, and procedural visuals.
 ## Build order chosen
 Crowd Forge → Arrow Survivor → Ink Claim → Gulp Hole → Spiral Drop → Stack Runner → Jam Tray →
 Merge Bastion → Gridlock → Tube Sort → Deep Dig → Ball Pour → Dodge Lane → Mob Magnet → Pocket Quest.
+
+## User-requested backlog (added 2026-11-04 ~21:15 UTC)
+
+The user asked for these titles to be added to the to-be-developed list. As everywhere else in
+Yantrasobi, each becomes an **original cartridge in the same mechanic family**. It gets its own name,
+rules tuning, and procedural visuals, and we copy no names, characters, art, sound, levels, or code.
+Publisher names come from general knowledge and were **not verified** (store sites are blocked here).
+Priority: P1 = distinct mechanic, high fun on one thumb, feasible here; P2 = feasible; P3 = heavy or
+overlaps an existing cartridge.
+
+| # | Requested reference | Publisher (unverified) | Mechanic family | Original cartridge (working title) | Engine | Priority | Status |
+|---|---|---|---|---|---|---|---|
+| 1 | Sky Stacker | – | tap-timing block stacking; overhang is sliced off | Cloud Tower | Flame 2D | P1 | TODO |
+| 2 | Number Blaster | – | cannon shoots numbered blocks that split | Digit Barrage | Flame 2D | P1 | TODO |
+| 3 | Going Balls | Supersonic Studios | roll a ball along an obstacle track | Roll Ridge | flutter_scene 3D | P2 | TODO |
+| 4 | Bridge Race | Supersonic Studios | collect colour planks, build stairs, race rivals | Plank Dash | Flame 2D (pseudo-3D) | P2 | TODO |
+| 5 | Jetpack Joyride | Halfbrick | hold to thrust, dodge hazards, endless | Thrust Corridor | Flame 2D | P1 | TODO |
+| 6 | Temple Run | Imangi | 3D endless runner with swipe turns | Ruin Sprint | flutter_scene 3D | P2 | TODO |
+| 7 | Subway Surfers | SYBO | 3-lane runner, trains and roofs | (covered by **Dodge Lane**; possible 3D variant "Rail Rush") | – | P3 | partial overlap |
+| 8 | Cut the Rope | ZeptoLab | rope physics, cut ropes to deliver a candy | Snip Drop | Flame 2D | P1 | TODO |
+| 9 | Hill Climb Racing | Fingersoft | 2D physics vehicle on hilly terrain, fuel | Slope Buggy | Flame 2D | P1 | TODO |
+| 10 | Smash Hit | Mediocre | 3D corridor, throw balls to break glass | Shatter Run | flutter_scene 3D | P2 | TODO |
+| 11 | Snake | classic | grow by eating, avoid self | Serpent Loop | Flame 2D | P1 | TODO |
+| 12 | Pinball | classic | flippers, bumpers, physics table | Flipper Rush | Flame 2D | P1 | TODO |
+| 13 | Breakout | classic | paddle, ball, bricks | Brickfall | Flame 2D | P1 | TODO |
+| 14 | Where's My Water? | Disney | dig terrain to route fluid to a goal | Dig Flow | Flame 2D | P2 | TODO |
+| 15 | Plants vs. Zombies | PopCap / EA | lane defence, resource economy | Garden Guard | Flame 2D | P1 | TODO |
+| 16 | Knife Hit | Ketchapp | throw blades into a rotating target | Blade Toss | Flame 2D | P1 | TODO |
+| 17 | Stickman Hook | Madbox | tap-hold grapple swinging | Swing Hook | Flame 2D | P1 | TODO |
+| 18 | Head Ball | Masomo | 1v1 physics head football | Bonk Ball | Flame 2D | P2 | TODO |
+| 19 | Marble Mansion | unknown (unverified) | marble run / tilt maze | Marble Maze | Flame 2D | P2 | TODO |
+| 20 | Bazooka Boy | Supersonic Studios | aim rockets, physics destruction | Rocket Rascal | Flame 2D | P2 | TODO |
+| 21 | Samurai Flash | unknown (unverified) | swipe-to-dash slicing between enemies | Edge Dash | Flame 2D | P1 | TODO |
+| 22 | Alto's Odyssey | Snowman | endless sandboard: slopes, jumps, flips | Dune Glide | Flame 2D | P2 | TODO |
+| 23 | Hungry Shark Evolution | Ubisoft / FGOL | swim, eat smaller prey, grow, survive | Deep Bite | Flame 2D | P2 | TODO |
+| 24 | Bad Piggies | Rovio | build a vehicle from parts, physics run | Junk Rover | Flame 2D | P3 | TODO |
+| 25 | Brain Dots | Translimit | draw physics lines to bring two dots together | Doodle Link | Flame 2D | P2 | TODO |
+| 26 | 8 Ball Pool | Miniclip | billiards vs AI | Cue Clash | Flame 2D | P1 | TODO |
+| 27 | Magic Tiles | Amanotes | rhythm tile tapping (original procedural tunes) | Key Cascade | Flame 2D | P1 | TODO |
+
+Build order for this backlog (P1 first, mixing in quick classics): Brickfall, Serpent Loop,
+Blade Toss, Cloud Tower, Thrust Corridor, Digit Barrage, Swing Hook, Edge Dash, Key Cascade, Cue Clash,
+Flipper Rush, Garden Guard, Snip Drop, Slope Buggy, then the P2 entries.

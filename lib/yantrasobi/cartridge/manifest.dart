@@ -92,6 +92,20 @@ class CartridgeManifest {
     return problems;
   }
 
+  /// Short engine label for tiles ("2D", "3D", "UI").
+  String get engineBadge => switch (engine) {
+    CartridgeEngine.flame2d => '2D',
+    CartridgeEngine.scene3d => '3D',
+    CartridgeEngine.widgets => 'UI',
+  };
+
+  /// Longer engine label for the detail page.
+  String get engineLabel => switch (engine) {
+    CartridgeEngine.flame2d => '2D · Flame',
+    CartridgeEngine.scene3d => '3D · flutter_scene',
+    CartridgeEngine.widgets => 'Flutter widgets',
+  };
+
   bool matchesQuery(String query) {
     final q = query.trim().toLowerCase();
     if (q.isEmpty) return true;

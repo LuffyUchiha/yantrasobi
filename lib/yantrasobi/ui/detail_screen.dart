@@ -102,7 +102,7 @@ class _CartridgeDetailScreenState extends State<CartridgeDetailScreen> {
             runSpacing: 6,
             children: [
               _pill(m.genre),
-              _pill(m.engine == CartridgeEngine.scene3d ? '3D · flutter_scene' : '2D · Flame'),
+              _pill(m.engineLabel),
               _pill('v${m.version}'),
               if (m.maturity != CartridgeMaturity.complete) _pill(m.maturity.name),
             ],

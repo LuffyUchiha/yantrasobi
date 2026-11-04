@@ -26,6 +26,7 @@ detail, launch, pause, resume, Android back (pauses), restart, a drag across the
 | 12 | Dodge Lane (`dodge-lane`) | Flame 2D (pseudo-3D) | endless lane dodger | COMPLETE | 15 | `dodge_lane_web.png` |
 | 13 | Deep Dig (`deep-dig`) | Flame 2D | idle mining manager (offline earnings) | COMPLETE | 15 | `deep_dig_web.png` |
 | 14 | Ball Pour (`ball-pour`) | Flame 2D + custom circle physics | cup/ball physics | COMPLETE | 16 | `ball_pour_web.png` |
+| 15 | Pocket Quest (`pocket-quest`) | Flutter widgets | text roguelike auto-adventure | COMPLETE | 14 | `pocket_quest_web.png` |
 
 Not verified anywhere: real Android devices (none available). APKs are built only in CI, and that is
 unverified while pushes to GitHub fail (see CURRENT_STATUS.md).
@@ -130,3 +131,12 @@ unverified while pushes to GitHub fail (see CURRENT_STATUS.md).
 * **Systems:**
   * Custom deterministic circle-and-segment physics with a fixed step and a speed cap (no tunnelling).
   * 10 authored levels as declarative data, then a looping harder variant.
+
+### Pocket Quest
+* **Goal:** survive 30 days and beat the day-30 boss.
+* **Controls:** NEXT DAY, pick 1 of 3 at shrines, shop, CAMP.
+* **Systems:**
+  * Fights run round by round and stop while paused.
+  * 14 skills with 4 synergies.
+  * Each chapter cleared is saved and makes the next one harder.
+* Built on the widget adapter (no Flame).
