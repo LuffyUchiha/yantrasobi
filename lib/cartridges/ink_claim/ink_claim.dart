@@ -249,7 +249,7 @@ class InkClaimGame extends AsobiFlameGame {
       final s = (w.shareOf(p.id) * 100).toStringAsFixed(0);
       final sz = CanvasText.draw(
         canvas,
-        p.alive ? '● $s%' : '○ out',
+        p.alive ? '$s%' : 'out',
         Offset(x, hudTop + 12),
         size: 11,
         color: palette[(p.id - 1) % palette.length],

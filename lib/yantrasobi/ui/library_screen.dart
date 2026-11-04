@@ -149,7 +149,7 @@ class _CartridgeTile extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     '${m.genre} · ${m.engine == CartridgeEngine.scene3d ? '3D' : '2D'}'
-                    '${save != null && save.bestScore > 0 ? ' · ★${save.bestScore}' : ''}',
+                    '${save != null && save.bestScore > 0 ? ' · best ${save.bestScore}' : ''}',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.bodySmall,

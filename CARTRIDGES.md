@@ -1,19 +1,100 @@
 # Cartridges
 
-Status key: **COMPLETE** = passes the gate (library entry, launch, touch, goal, score/win-lose,
-replay, cleanup, manifest, rules tests, format/analyze/test green). **PARTIAL** = playable but
-gaps listed. **BLOCKED** = cannot ship; blocker listed.
+Status key:
+* **COMPLETE**: passes the gate. That means a library entry, launch, touch controls, a clear goal,
+  score or win/lose, replay, cleanup, a manifest, rules tests, and green format/analyze/test.
+* **PARTIAL**: playable, with the gaps listed.
+* **BLOCKED**: cannot ship; the blocker is listed.
 
-| # | Cartridge | Engine | Mechanic family | Status | Rules tests |
-|---|-----------|--------|-----------------|--------|-------------|
-| 1 | Arrow Survivor (`arrow-survivor`) | Flame 2D | auto-attack arena survivor, waves, upgrade cards | COMPLETE | `test/cartridges/arrow_survivor_test.dart` (9) |
+Every registered cartridge also runs through `test/yantrasobi/console_flow_test.dart`: library tile,
+detail, launch, pause, resume, Android back (pauses), restart, a drag across the surface, and exit.
+3D cartridges run their canvas fallback in tests because the test VM has no GPU.
 
-## Details
+| # | Cartridge (id) | Engine | Mechanic family | Status | Rules tests | Web capture |
+|---|---|---|---|---|---|---|
+| 1 | Crowd Forge (`crowd-forge`) | flutter_scene 3D | crowd launcher, multiplier gates | COMPLETE | 14 | `docs/screenshots/crowd_forge_3d_web.png` |
+| 2 | Arrow Survivor (`arrow-survivor`) | Flame 2D | auto-attack survivor, upgrade cards | COMPLETE | 9 | `arrow_survivor_web.png` |
+| 3 | Ink Claim (`ink-claim`) | Flame 2D | territory capture (trail + flood fill) | COMPLETE | 9 | `ink_claim_web.png` |
+| 4 | Spiral Drop (`spiral-drop`) | flutter_scene 3D | helix tower descent | COMPLETE | 9 | `spiral_drop_3d_web.png` |
+| 5 | Gulp Hole (`gulp-hole`) | Flame 2D | growing hole swallows the city | COMPLETE | 16 | `gulp_hole_web.png` |
+| 6 | Jam Tray (`jam-tray`) | Flame 2D | layered tiles into a 7-slot tray | COMPLETE | 15 | `jam_tray_web.png` |
+| 7 | Stack Runner (`stack-runner`) | Flame 2D (pseudo-3D) | block-stack runner, finish multipliers | COMPLETE | 14 | `stack_runner_web.png` |
+| 8 | Tube Sort (`tube-sort`) | Flame 2D | colour sorting (solver-checked) | COMPLETE | 9 | `tube_sort_web.png` |
+| 9 | Gridlock (`gridlock`) | Flame 2D | traffic-escape puzzle | COMPLETE | 14 | – |
+| 10 | Merge Bastion (`merge-bastion`) | Flame 2D | merge defence | COMPLETE | 13 | `merge_bastion_web.png` |
 
-### Arrow Survivor
-* **Goal:** survive 10 waves (bosses on 5 and 10). Lose when HP reaches 0.
-* **Controls:** drag anywhere to move with a floating joystick; tap a card to pick an upgrade.
-* **Systems:** auto-fire at the nearest enemy, a pooled arrow pool, 5 enemy archetypes, pick one
-  of three upgrades between waves (multishot, rate, pierce, damage, speed, vitality, orbit
-  blades, heal), heart drops.
-* **Score:** points per kill by type, plus 100 × wave for each wave cleared.
+Not verified anywhere: real Android devices (none available). APKs are built only in CI, and that is
+unverified while pushes to GitHub fail (see CURRENT_STATUS.md).
+
+## Notes per cartridge
+
+### Crowd Forge (3D reference)
+* **Goal:** knock the enemy forge's HP to 0 before 20 red runners breach your base.
+* **Controls:** hold to fire; slide to aim.
+* **Systems:**
+  * ×2/×3/×4 multiplier gates (some sway).
+  * Blades from level 2.
+  * Champion every 45 shots.
+  * Fixed 360/160 unit pools mapped 1:1 onto two `InstancedMesh` draws.
+  * Level saved on win.
+* **Balance:** a sweeping bot clears level 1 in about 21 s. Idling loses.
+
+### Arrow Survivor (2D reference)
+* **Goal:** survive 10 waves; bosses on waves 5 and 10.
+* **Controls:** floating joystick; pick an upgrade card between waves.
+* **Systems:** arrow pool, 5 enemy archetypes, 8 upgrades, heart drops. The arena sits below the HUD.
+
+### Ink Claim
+* **Goal:** paint 50% of the board.
+* **Controls:** swipe to turn.
+* **Systems:** trail cutting, enclosed-area fill, 3 bot painters, walls deflect.
+
+### Spiral Drop (3D)
+* **Goal:** reach the finish platform.
+* **Controls:** drag to rotate the tower.
+* **Systems:**
+  * Ring sectors built with `GeometryBuilder` in one instanced draw.
+  * Hazards from ring 4.
+  * Blaze (3 drops without a bounce) smashes the next ring.
+  * Levels saved.
+
+### Gulp Hole
+* **Goal:** be the biggest hole when the 90 s timer ends, or eat 60% of the city.
+* **Controls:** floating joystick.
+* **Systems:**
+  * 3 rival holes.
+  * 20 s start grace.
+  * Rivals hunt only when 35% bigger, with limited hunt time.
+* **Balance:** checked with a scripted bot only.
+
+### Jam Tray
+* **Goal:** clear the board without filling the 7-slot tray.
+* **Systems:** 3 undos and 2 shuffles per run. Boards are generated in reverse, so they are always solvable.
+* **Difficulty:** level 1 has only 3 kinds and cannot be lost (deliberate onboarding).
+
+### Stack Runner
+* **Goal:** reach the finish stairs; score is gems × the step reached.
+* **Systems:** walls strip blocks; gaps take a block per plank; x1–x10 stairs.
+* **Not done:** the optional colour gates.
+
+### Tube Sort
+* **Goal:** one colour per tube.
+* **Systems:**
+  * Every deal is checked by a DFS solver.
+  * 5 undos and 1 extra tube per run.
+  * Glyphs on the balls help colour-blind players.
+
+### Gridlock
+* **Goal:** drive every vehicle off the lot; 3 bumps lose.
+* **Systems:**
+  * Lots are generated by reverse construction, so they are always solvable.
+  * 2 hints per run.
+  * Lots grow from 6x8 to 9x12.
+
+### Merge Bastion
+* **Goal:** survive 15 waves.
+* **Systems:**
+  * Summon for 10 coins plus 2 per purchase.
+  * Merge twins up to tier 8.
+  * Boss every 5th wave.
+* **Balance:** a bot that summons and merges wins level 1 on 20 of 20 seeds. Idling loses by wave 3.

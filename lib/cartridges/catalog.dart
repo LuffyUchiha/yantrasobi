@@ -6,6 +6,7 @@ import 'gridlock/gridlock.dart';
 import 'gulp_hole/gulp_hole.dart';
 import 'ink_claim/ink_claim.dart';
 import 'jam_tray/jam_tray.dart';
+import 'merge_bastion/merge_bastion.dart';
 import 'spiral_drop/spiral_drop.dart';
 import 'stack_runner/stack_runner.dart';
 import 'tube_sort/tube_sort.dart';
@@ -23,6 +24,7 @@ List<Cartridge> bundledCartridges() => const [
   StackRunnerCartridge(),
   TubeSortCartridge(),
   GridlockCartridge(),
+  MergeBastionCartridge(),
 ];
 
 CartridgeRegistry buildRegistry() => CartridgeRegistry(bundledCartridges());
