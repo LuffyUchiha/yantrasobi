@@ -27,6 +27,10 @@ detail, launch, pause, resume, Android back (pauses), restart, a drag across the
 | 13 | Deep Dig (`deep-dig`) | Flame 2D | idle mining manager (offline earnings) | COMPLETE | 15 | `deep_dig_web.png` |
 | 14 | Ball Pour (`ball-pour`) | Flame 2D + custom circle physics | cup/ball physics | COMPLETE | 16 | `ball_pour_web.png` |
 | 15 | Pocket Quest (`pocket-quest`) | Flutter widgets | text roguelike auto-adventure | COMPLETE | 14 | `pocket_quest_web.png` |
+| 16 | Roll Ridge (`roll-ridge`) | flutter_scene 3D | rolling ball obstacle course | COMPLETE | 10 | `roll_ridge_3d_web.png` |
+| 17 | Blade Toss (`blade-toss`) | Flame 2D | blades into a rotating target | COMPLETE | 15 | `blade_toss_web.png` |
+| 18 | Serpent Loop (`serpent-loop`) | Flame 2D | snake (classic + wrap modes) | COMPLETE | 15 | `serpent_loop_web.png` |
+| 19 | Brickfall (`brickfall`) | Flame 2D | paddle-and-ball brick breaker | COMPLETE | 19 | `brickfall_web.png` |
 
 Not verified anywhere: real Android devices (none available). APKs are built only in CI, and that is
 unverified while pushes to GitHub fail (see CURRENT_STATUS.md).
@@ -140,3 +144,33 @@ unverified while pushes to GitHub fail (see CURRENT_STATUS.md).
   * 14 skills with 4 synergies.
   * Each chapter cleared is saved and makes the next one harder.
 * Built on the widget adapter (no Flame).
+
+### Roll Ridge (3D)
+* **Goal:** reach the finish with lives left (3 lives, checkpoints).
+* **Controls:** drag sideways to steer.
+* **Systems:**
+  * Ramps launch the ball over gaps.
+  * Hazards are sweepers, pushers and bumpers.
+  * Track tiles are yawed along the curve in one instanced draw.
+  * Gradient sky.
+
+### Blade Toss
+* **Goal:** an endless stage climb; one clash ends the run.
+* **Controls:** tap to throw.
+* **Systems:**
+  * Spin scripts: constant, swell, reverse and stop-and-go.
+  * Pre-placed obstacle blades.
+  * Gems on the rim.
+  * A boss every 5 stages.
+  * Generation keeps a safe window open.
+
+### Serpent Loop
+* **Modes:** Classic, with level goals, walls and rock layouts from level 3; Wrap, an endless score attack.
+* **Controls:** swipe, with a 2-turn queue.
+* **Pickups:** apples, golden fruit, shrink berries, phase orbs.
+
+### Brickfall
+* **Goal:** clear every breakable brick; 3 lives.
+* **Bricks:** 10 authored layouts, then generated ones. Brick types are tough, steel and explosive.
+* **Capsules:** wide paddle, multi-ball, slow ball, laser, extra life.
+* **Physics:** substepped, so the ball cannot tunnel.

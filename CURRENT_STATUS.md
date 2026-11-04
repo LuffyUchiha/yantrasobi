@@ -24,11 +24,11 @@ _Updated: 2026-11-04 ~21:00 UTC (session start 20:08 UTC)._
 | Cartridge API v1, registry, saves, settings, audio | DONE | `test/yantrasobi/core_test.dart` |
 | Flame adapter | DONE | 11 Flame cartridges |
 | Widget adapter | DONE | `lib/yantrasobi/adapters/widget_adapter.dart` |
-| flutter_scene adapter + canvas fallback | DONE | Crowd Forge and Spiral Drop render in Chromium WebGL2 |
+| flutter_scene adapter + canvas fallback | DONE | Crowd Forge, Spiral Drop, Mob Magnet and Roll Ridge render in Chromium WebGL2 (gradient skies) |
 | Crowd Forge (3D reference) | COMPLETE | 14 tests + web capture |
 | Arrow Survivor (2D reference) | COMPLETE | 9 tests + web capture |
 | Research catalog | DONE (secondary sources) | `research/CATALOG.md` |
-| Cartridge factory | 14 COMPLETE | see CARTRIDGES.md |
+| Cartridge factory | 19 COMPLETE | see CARTRIDGES.md |
 
 ## Verification log (latest run)
 | Check | Result |
@@ -40,7 +40,7 @@ _Updated: 2026-11-04 ~21:00 UTC (session start 20:08 UTC)._
 | `flutter build apk` | not runnable locally (no Android SDK); CI only, never run because pushes fail |
 
 ## In progress
-* Pocket Quest (text roguelike on the widget adapter) is in progress.
+* Backlog from the user's list (research/CATALOG.md): Cloud Tower is in progress; the next batch is queued.
 
 ## Known gaps
 * Never run on a phone. Touch is exercised by widget tests and by mouse-driven Chromium captures only.

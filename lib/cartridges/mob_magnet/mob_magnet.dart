@@ -169,6 +169,7 @@ class MobMagnetGame extends SceneGame {
 
   @override
   void buildScene(Scene scene) {
+    applyGradientSky(scene, zenith: vm.Vector3(0.05, 0.08, 0.22), horizon: vm.Vector3(0.40, 0.55, 0.75));
     const s = MobWorld.size;
     scene.add(
       Node(mesh: Mesh(CuboidGeometry(vm.Vector3(s + 120, 0.2, s + 120)), _mat(const Color(0xFF23263D))))

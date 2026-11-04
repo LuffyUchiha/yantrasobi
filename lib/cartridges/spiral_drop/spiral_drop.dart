@@ -208,6 +208,7 @@ class SpiralDropGame extends SceneGame {
 
   @override
   void buildScene(Scene scene) {
+    applyGradientSky(scene, zenith: vm.Vector3(0.08, 0.05, 0.25), horizon: vm.Vector3(0.55, 0.35, 0.75));
     final last = world.rings.last.y;
     const pillarTop = 1.2;
     final pillarHeight = pillarTop - last + 1;

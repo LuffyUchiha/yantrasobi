@@ -35,6 +35,25 @@ abstract final class SceneSupport {
   }
 }
 
+/// Applies a procedural gradient sky as the visible background.
+///
+/// Colours are linear RGB. Failures (e.g. a backend without the sky shader)
+/// are logged and leave the default background.
+void applyGradientSky(
+  Scene scene, {
+  required vm.Vector3 zenith,
+  required vm.Vector3 horizon,
+  vm.Vector3? ground,
+}) {
+  try {
+    scene.skybox = Skybox(
+      GradientSkySource(zenithColor: zenith, horizonColor: horizon, groundColor: ground ?? horizon * 0.6),
+    );
+  } catch (e) {
+    debugPrint('Yantrasobi: gradient sky unavailable ($e)');
+  }
+}
+
 /// Camera placement shared by the GPU and fallback paths.
 class SceneCameraSpec {
   const SceneCameraSpec({required this.eye, required this.target, this.fovY = 0.9});

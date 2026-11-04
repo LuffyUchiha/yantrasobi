@@ -156,6 +156,7 @@ class CrowdForgeGame extends SceneGame {
 
   @override
   void buildScene(Scene scene) {
+    applyGradientSky(scene, zenith: vm.Vector3(0.03, 0.04, 0.16), horizon: vm.Vector3(0.45, 0.22, 0.42));
     const lw = CrowdWorld.laneHalfWidth;
     const fz = CrowdWorld.forgeZ;
     scene.add(

@@ -2,6 +2,8 @@ import '../yantrasobi/cartridge/cartridge.dart';
 import '../yantrasobi/cartridge/registry.dart';
 import 'arrow_survivor/arrow_survivor.dart';
 import 'ball_pour/ball_pour.dart';
+import 'blade_toss/blade_toss.dart';
+import 'brickfall/brickfall.dart';
 import 'crowd_forge/crowd_forge.dart';
 import 'deep_dig/deep_dig.dart';
 import 'dodge_lane/dodge_lane.dart';
@@ -12,6 +14,8 @@ import 'jam_tray/jam_tray.dart';
 import 'merge_bastion/merge_bastion.dart';
 import 'mob_magnet/mob_magnet.dart';
 import 'pocket_quest/pocket_quest.dart';
+import 'roll_ridge/roll_ridge.dart';
+import 'serpent_loop/serpent_loop.dart';
 import 'spiral_drop/spiral_drop.dart';
 import 'stack_runner/stack_runner.dart';
 import 'tube_sort/tube_sort.dart';
@@ -25,6 +29,7 @@ List<Cartridge> bundledCartridges() => const [
   InkClaimCartridge(),
   SpiralDropCartridge(),
   MobMagnetCartridge(),
+  RollRidgeCartridge(),
   GulpHoleCartridge(),
   JamTrayCartridge(),
   StackRunnerCartridge(),
@@ -35,6 +40,9 @@ List<Cartridge> bundledCartridges() => const [
   DeepDigCartridge(),
   BallPourCartridge(),
   PocketQuestCartridge(),
+  BladeTossCartridge(),
+  SerpentLoopCartridge(),
+  BrickfallCartridge(),
 ];
 
 CartridgeRegistry buildRegistry() => CartridgeRegistry(bundledCartridges());
