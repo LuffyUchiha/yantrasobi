@@ -8,11 +8,13 @@ import '../../yantrasobi/adapters/canvas_kit.dart';
 import '../../yantrasobi/adapters/flame_adapter.dart';
 import '../../yantrasobi/cartridge/cartridge.dart';
 import '../../yantrasobi/cartridge/manifest.dart';
+import '../../yantrasobi/datapacks/data_pack.dart';
 import '../../yantrasobi/services/audio.dart';
 import '../common/sparks.dart';
 import 'brick_world.dart';
+import 'levels.dart';
 
-class BrickfallCartridge extends FlameCartridge<BrickfallGame> {
+class BrickfallCartridge extends FlameCartridge<BrickfallGame> implements DataPackConsumer {
   const BrickfallCartridge();
 
   static const CartridgeManifest kManifest = CartridgeManifest(
@@ -50,7 +52,64 @@ class BrickfallCartridge extends FlameCartridge<BrickfallGame> {
 
   @override
   BrickfallGame createGame(FlameCartridgeSession<BrickfallGame> session) => BrickfallGame(session);
+
+  @override
+  String get dataPackDescription =>
+      'Extra brick layouts ({"levels": [{"name": ..., "rows": [...]}]}), played after the built-in levels.';
+
+  @override
+  List<String> validatePackPayload(Map<String, Object?> payload) => validateBrickPack(payload);
 }
+
+const String _legend = '.123#*WMSLH';
+
+/// Validates a Brickfall data-pack payload: `{"levels": [{"name", "rows"}]}`.
+List<String> validateBrickPack(Map<String, Object?> payload) {
+  final problems = <String>[];
+  final levels = payload['levels'];
+  if (levels is! List || levels.isEmpty) return ['payload.levels must be a non-empty list'];
+  if (levels.length > 50) problems.add('at most 50 levels per pack');
+  for (var i = 0; i < levels.length; i++) {
+    final l = levels[i];
+    if (l is! Map) {
+      problems.add('level ${i + 1} must be an object');
+      continue;
+    }
+    final name = l['name'];
+    if (name is! String || name.trim().isEmpty || name.length > 32) {
+      problems.add('level ${i + 1}: name must be 1-32 characters');
+    }
+    final rows = l['rows'];
+    if (rows is! List || rows.isEmpty || rows.length > kBrickMaxRows) {
+      problems.add('level ${i + 1}: rows must be a list of 1-$kBrickMaxRows strings');
+      continue;
+    }
+    var breakable = 0;
+    for (final r in rows) {
+      if (r is! String || r.length != kBrickCols) {
+        problems.add('level ${i + 1}: every row must be exactly $kBrickCols characters');
+        break;
+      }
+      for (final ch in r.split('')) {
+        if (!_legend.contains(ch)) {
+          problems.add('level ${i + 1}: unknown brick "$ch"');
+          break;
+        }
+        if (ch != '.' && ch != '#') breakable++;
+      }
+    }
+    if (breakable == 0) problems.add('level ${i + 1}: needs at least one breakable brick');
+  }
+  return problems;
+}
+
+/// Pack levels in install order (only payloads that validate).
+List<BrickLevelDef> brickPackLevels(List<Map<String, Object?>> payloads) => [
+  for (final p in payloads)
+    if (validateBrickPack(p).isEmpty)
+      for (final l in (p['levels'] as List).cast<Map>())
+        BrickLevelDef(l['name'] as String, (l['rows'] as List).cast<String>()),
+];
 
 /// Display colours for each capsule kind.
 const Map<PowerKind, Color> kPowerColors = {
@@ -82,10 +141,32 @@ const List<Color> _rowColors = [
 class BrickfallGame extends AsobiFlameGame {
   BrickfallGame(super.session, {this.seed})
     : level = math.max(1, session.context.save.intData('level', 1)),
-      bricks = BrickWorld(
-        seed: seed ?? DateTime.now().microsecondsSinceEpoch,
-        level: math.max(1, session.context.save.intData('level', 1)),
+      packLevels = brickPackLevels(session.context.dataPacks),
+      bricks = worldFor(
+        seed ?? DateTime.now().microsecondsSinceEpoch,
+        math.max(1, session.context.save.intData('level', 1)),
+        brickPackLevels(session.context.dataPacks),
       );
+
+  /// Levels 1..10 are built in, then installed data-pack levels, then
+  /// generated levels.
+  static BrickWorld worldFor(int seed, int level, List<BrickLevelDef> pack) {
+    final packIndex = level - kAuthoredLevels.length - 1;
+    if (packIndex >= 0 && packIndex < pack.length) {
+      return BrickWorld.custom(pack[packIndex].rows, seed: seed, level: level);
+    }
+    final generatedLevel = packIndex >= pack.length ? level - pack.length : level;
+    return BrickWorld(seed: seed, level: generatedLevel);
+  }
+
+  final List<BrickLevelDef> packLevels;
+
+  /// Display name for the current level, including data-pack levels.
+  String get levelTitle {
+    final packIndex = level - kAuthoredLevels.length - 1;
+    if (packIndex >= 0 && packIndex < packLevels.length) return packLevels[packIndex].name;
+    return BrickWorld.levelName(packIndex >= packLevels.length ? level - packLevels.length : level);
+  }
 
   final int? seed;
   final int level;
@@ -221,9 +302,7 @@ class BrickfallGame extends AsobiFlameGame {
       RunResult(
         score: bricks.score,
         won: won,
-        headline: won
-            ? '${BrickWorld.levelName(level)} cleared! Level ${level + 1} unlocked.'
-            : 'Out of balls on level $level.',
+        headline: won ? '$levelTitle cleared! Level ${level + 1} unlocked.' : 'Out of balls on level $level.',
         details: {
           'Level': '$level',
           'Bricks broken': '${bricks.bricksBroken}',
@@ -485,7 +564,7 @@ class BrickfallGame extends AsobiFlameGame {
     } else if (_clock < 2.5) {
       CanvasText.draw(
         canvas,
-        BrickWorld.levelName(level).toUpperCase(),
+        levelTitle.toUpperCase(),
         Offset(size.x / 2, size.y * 0.55),
         size: 22,
         align: Alignment.center,

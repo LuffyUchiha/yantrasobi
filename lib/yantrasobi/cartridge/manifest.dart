@@ -49,6 +49,8 @@ class CartridgeManifest {
     this.mechanics = const [],
     this.goal = '',
     this.maturity = CartridgeMaturity.complete,
+    this.maxPlayers = 1,
+    this.localMultiplayer = false,
   });
 
   /// Stable, unique id, lowercase with dashes. Used as the save-slot key.
@@ -72,6 +74,15 @@ class CartridgeManifest {
   final String goal;
   final CartridgeMaturity maturity;
 
+  /// Most players a match supports. Cartridges above 1 are multiplayer-ready:
+  /// deterministic, input-command-driven rules that a network transport can
+  /// drive. Networking itself is not part of this console build.
+  final int maxPlayers;
+
+  /// Whether several people can play on one device (split screen or
+  /// pass-and-play) without any network.
+  final bool localMultiplayer;
+
   static final RegExp _idPattern = RegExp(r'^[a-z][a-z0-9-]{1,40}$');
   static final RegExp _semver = RegExp(r'^\d+\.\d+\.\d+$');
 
@@ -89,6 +100,8 @@ class CartridgeManifest {
     }
     if (goal.trim().isEmpty) problems.add('missing goal text');
     if (controls.isEmpty) problems.add('missing control hints');
+    if (maxPlayers < 1 || maxPlayers > 8) problems.add('maxPlayers must be 1..8');
+    if (localMultiplayer && maxPlayers < 2) problems.add('localMultiplayer needs maxPlayers >= 2');
     return problems;
   }
 
@@ -129,5 +142,7 @@ class CartridgeManifest {
     'mechanics': mechanics,
     'goal': goal,
     'maturity': maturity.name,
+    'maxPlayers': maxPlayers,
+    'localMultiplayer': localMultiplayer,
   };
 }

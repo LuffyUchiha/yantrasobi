@@ -48,6 +48,7 @@ class _CartridgeHostScreenState extends State<CartridgeHostScreen> with WidgetsB
         audio: _services.audio,
         settings: _services.settings,
         onSaveChanged: _persist,
+        dataPacks: [for (final pack in _services.packs.packsFor(id)) pack.payload],
       ),
     );
     _session = session..addListener(_onSessionChanged);

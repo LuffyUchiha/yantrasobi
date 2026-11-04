@@ -31,6 +31,7 @@ detail, launch, pause, resume, Android back (pauses), restart, a drag across the
 | 17 | Blade Toss (`blade-toss`) | Flame 2D | blades into a rotating target | COMPLETE | 15 | `blade_toss_web.png` |
 | 18 | Serpent Loop (`serpent-loop`) | Flame 2D | snake (classic + wrap modes) | COMPLETE | 15 | `serpent_loop_web.png` |
 | 19 | Brickfall (`brickfall`) | Flame 2D | paddle-and-ball brick breaker | COMPLETE | 19 | `brickfall_web.png` |
+| 20 | Cloud Tower (`cloud-tower`) | Flame 2D (isometric) | tap-timing slab stacking | COMPLETE | 14 | – |
 
 Not verified anywhere: real Android devices (none available). APKs are built only in CI, and that is
 unverified while pushes to GitHub fail (see CURRENT_STATUS.md).
@@ -174,3 +175,12 @@ unverified while pushes to GitHub fail (see CURRENT_STATUS.md).
 * **Bricks:** 10 authored layouts, then generated ones. Brick types are tough, steel and explosive.
 * **Capsules:** wide paddle, multi-ball, slow ball, laser, extra life.
 * **Physics:** substepped, so the ball cannot tunnel.
+* **Data packs:** accepts level packs (see docs/DATA_PACKS.md).
+
+### Cloud Tower
+* **Goal:** an endless stack climb.
+* **Controls:** tap to drop the sliding slab.
+* **Systems:**
+  * The overhang is sliced off as falling debris.
+  * Perfect drops snap and, in streaks, regrow the slab.
+  * The sky changes from day to sunset, night and space.

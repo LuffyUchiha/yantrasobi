@@ -1,0 +1,48 @@
+{
+  "format": "yantrasobi.datapack",
+  "schema": 1,
+  "id": "brickfall.neon-nights",
+  "cartridge": "brickfall",
+  "title": "Neon Nights",
+  "version": "1.0.0",
+  "author": "Yantrasobi sample",
+  "payload": {
+    "levels": [
+      {
+        "name": "Neon Gate",
+        "rows": [
+          "#........#",
+          "#.222222.#",
+          "#.2*11*2.#",
+          "#.21WM12.#",
+          "#.222222.#",
+          "#........#",
+          "1111111111"
+        ]
+      },
+      {
+        "name": "Signal Bars",
+        "rows": [
+          "1.2.3.3.2.",
+          "1.2.3.3.2.",
+          "1.2.3L3.2.",
+          "1.2.3.3.2.",
+          "1.2.3.3.2.",
+          "1111111111"
+        ]
+      },
+      {
+        "name": "Circuit",
+        "rows": [
+          "*1111111*.",
+          "1.......1.",
+          "1.22S22.1.",
+          "1.2##.2.1.",
+          "1.22222.1.",
+          "1.......1.",
+          "*111H111*."
+        ]
+      }
+    ]
+  }
+}

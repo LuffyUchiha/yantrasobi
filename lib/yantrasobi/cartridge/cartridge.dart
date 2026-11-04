@@ -30,6 +30,7 @@ class CartridgeContext {
     required this.audio,
     required this.settings,
     this.onSaveChanged,
+    this.dataPacks = const [],
   });
 
   final CartridgeManifest manifest;
@@ -42,6 +43,9 @@ class CartridgeContext {
   /// Called by cartridges after mutating [save.data] mid-run (e.g. idle
   /// progress, unlocked levels). The host persists it.
   final VoidCallback? onSaveChanged;
+
+  /// Validated data-pack payloads addressed to this cartridge (JSON maps).
+  final List<Map<String, Object?>> dataPacks;
 
   void commitSave() => onSaveChanged?.call();
 }

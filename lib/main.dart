@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import 'cartridges/catalog.dart';
 import 'yantrasobi/app.dart';
+import 'yantrasobi/datapacks/data_pack.dart';
 import 'yantrasobi/runtime/services.dart';
 import 'yantrasobi/services/audio.dart';
 import 'yantrasobi/services/save_store.dart';
@@ -13,11 +14,13 @@ Future<void> main() async {
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   final store = await PrefsKeyValueStore.open();
   final settings = AsobiSettings(store);
+  final registry = buildRegistry();
   final services = AsobiServices(
-    registry: buildRegistry(),
+    registry: registry,
     saves: SaveRepository(store),
     settings: settings,
     audio: SynthAudio(settings),
+    packs: DataPackRepository(store, registry),
   );
   await services.warmUp();
   runApp(YantrasobiApp(services: services));

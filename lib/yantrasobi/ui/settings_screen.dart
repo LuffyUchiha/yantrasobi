@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../cartridge/manifest.dart';
 import '../runtime/services.dart';
+import 'data_packs_screen.dart';
 
 /// Console-wide settings.
 class SettingsScreen extends StatelessWidget {
@@ -45,6 +46,16 @@ class SettingsScreen extends StatelessWidget {
               onChanged: (v) => s.reducedEffects = v,
             ),
             const Divider(),
+            ListTile(
+              key: const Key('settings.packs'),
+              leading: const Icon(Icons.extension_rounded),
+              title: const Text('Data packs'),
+              subtitle: Text('${services.packs.installed.length} installed · levels and content as JSON'),
+              trailing: const Icon(Icons.chevron_right_rounded),
+              onTap: () =>
+                  Navigator.of(context)
+                      .push(MaterialPageRoute<void>(builder: (_) => const DataPacksScreen())),
+            ),
             ListTile(
               title: const Text('About'),
               subtitle: Text(

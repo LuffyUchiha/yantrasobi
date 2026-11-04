@@ -4,6 +4,7 @@ import 'arrow_survivor/arrow_survivor.dart';
 import 'ball_pour/ball_pour.dart';
 import 'blade_toss/blade_toss.dart';
 import 'brickfall/brickfall.dart';
+import 'cloud_tower/cloud_tower.dart';
 import 'crowd_forge/crowd_forge.dart';
 import 'deep_dig/deep_dig.dart';
 import 'dodge_lane/dodge_lane.dart';
@@ -43,6 +44,7 @@ List<Cartridge> bundledCartridges() => const [
   BladeTossCartridge(),
   SerpentLoopCartridge(),
   BrickfallCartridge(),
+  CloudTowerCartridge(),
 ];
 
 CartridgeRegistry buildRegistry() => CartridgeRegistry(bundledCartridges());

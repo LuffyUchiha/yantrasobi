@@ -149,7 +149,7 @@ class _CartridgeTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    '${m.genre} · ${m.engineBadge}'
+                    '${m.genre} · ${m.engineBadge}${m.maxPlayers > 1 ? ' · 1-${m.maxPlayers}P' : ''}'
                     '${save != null && save.bestScore > 0 ? ' · best ${save.bestScore}' : ''}',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

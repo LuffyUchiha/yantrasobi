@@ -96,3 +96,40 @@ overlaps an existing cartridge.
 Build order for this backlog (P1 first, mixing in quick classics): Brickfall, Serpent Loop,
 Blade Toss, Cloud Tower, Thrust Corridor, Digit Barrage, Swing Hook, Edge Dash, Key Cascade, Cue Clash,
 Flipper Rush, Garden Guard, Snip Drop, Slope Buggy, then the P2 entries.
+
+## User-requested additions, round 2 (2026-11-04 ~21:45 UTC)
+
+Evidence comes from web search; store pages can't be fetched from this sandbox.
+* Supercent titles: [Pizza Ready! App Store listing](https://apps.apple.com/us/app/pizza-ready/id6450917563?uo=2), which also lists Outlets Rush, Super Big Slime and Burger Please!.
+* Supercent publisher ranking: [Technode press release](https://technode.global/?p=113516).
+* XP Hero by Supercent, Inc.: [App Store](https://apps.apple.com/us/app/xp-hero/id6740618570); its bundle id is `io.supercent.weaponrpg` per [appgoblin](https://appgoblin.info/apps/io.supercent.weaponrpg/keywords).
+* Monster Survivors: the publisher was **not found**. Score! Hero: the publisher is from general knowledge, **unverified**.
+
+| # | Requested reference | Publisher | Mechanic family | Original cartridge (working title) | Engine | Priority | Status |
+|---|---|---|---|---|---|---|---|
+| 28 | Score! Hero | First Touch Games (unverified) | draw the pass/shot path, story-driven football moments | Curve Kick | Flame 2D | P1 | TODO |
+| 29 | XP Hero | Supercent | weapon-collecting survivor RPG | (family covered by **Arrow Survivor**; variant "Gear Rush" with weapon merging) | Flame 2D | P2 | TODO |
+| 30 | Monster Survivors | unknown | horde survival, auto-attack, evolutions | (covered by **Arrow Survivor**; possible "Night Horde" variant with weapon evolutions) | Flame 2D | P3 | overlap |
+| 31 | Pizza Ready! | Supercent | idle-arcade restaurant: carry stacks, serve queues, hire staff | Oven Rush | Flame 2D | P1 | TODO |
+| 32 | Burger Please! | Supercent | same family as #31 (franchise growth) | (merged into Oven Rush) | – | – | merged |
+| 33 | Snake Clash! | Supercent | io snake battle: eat, grow, coil, clash rivals | Coil Clash | Flame 2D | P1 | TODO (multiplayer-ready) |
+| 34 | Outlets Rush | Supercent | store management, shelves, customers | Mall Hustle | Flame 2D | P2 | TODO |
+| 35 | Super Big Slime / Black Hole 3D | Supercent | grow by swallowing | (covered by **Gulp Hole**) | – | – | covered |
+
+## Multiplayer-capable cartridges
+
+Another session is building the multiplayer feature. To avoid colliding with it, this branch adds
+**no networking code**. Instead these cartridges are *multiplayer-ready*:
+* Their rules are deterministic and driven by per-player input commands, with fixed timesteps and seeded
+  RNG, so a lockstep or relay transport can drive them unchanged.
+* They ship a **same-device** multiplayer mode (split-screen or pass-and-play) that works offline.
+* Their manifests declare `maxPlayers`, and the tag `multiplayer-ready` makes them easy to find.
+
+| Cartridge (working title) | Family | Players now (offline) | Online-ready shape | Status |
+|---|---|---|---|---|
+| Puck Duel | air hockey | 1 vs AI, or 2 on one device (split screen) | 2 players, input = paddle target position | TODO |
+| Bonk Ball (#18) | 1v1 head football | 1 vs AI, or 2 on one device | 2 players, input = move/jump/kick | TODO |
+| Cue Clash (#26) | 8-ball pool | 1 vs AI, or pass-and-play | turn-based, input = shot vector | TODO |
+| Coil Clash (#33) | io snake battle | 1 + bots | N players, input = heading | TODO |
+| Quad Pong | 2–4 player pong | 2–4 on one device (one paddle per edge) | input = paddle position | TODO |
+| Ink Claim (existing) | territory capture | 1 + 3 bots | bots stand in for remote painters; input = turn | COMPLETE (single-player) |
