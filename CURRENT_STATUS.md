@@ -28,7 +28,7 @@ _Updated: 2026-11-04 ~21:00 UTC (session start 20:08 UTC)._
 | Crowd Forge (3D reference) | COMPLETE | 14 tests + web capture |
 | Arrow Survivor (2D reference) | COMPLETE | 9 tests + web capture |
 | Research catalog | DONE (secondary sources) | `research/CATALOG.md` |
-| Cartridge factory | 20 COMPLETE | see CARTRIDGES.md |
+| Cartridge factory | 22 COMPLETE | see CARTRIDGES.md |
 | Declarative data packs (JSON only) | DONE | `docs/DATA_PACKS.md`, `test/yantrasobi/data_pack_test.dart`; Brickfall consumes level packs |
 | Multiplayer-ready metadata | DONE | `CartridgeManifest.maxPlayers/localMultiplayer`; no networking in this branch (another session owns it) |
 

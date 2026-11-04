@@ -6,6 +6,7 @@ import 'blade_toss/blade_toss.dart';
 import 'brickfall/brickfall.dart';
 import 'cloud_tower/cloud_tower.dart';
 import 'crowd_forge/crowd_forge.dart';
+import 'curve_kick/curve_kick.dart';
 import 'deep_dig/deep_dig.dart';
 import 'dodge_lane/dodge_lane.dart';
 import 'gridlock/gridlock.dart';
@@ -18,6 +19,7 @@ import 'pocket_quest/pocket_quest.dart';
 import 'roll_ridge/roll_ridge.dart';
 import 'serpent_loop/serpent_loop.dart';
 import 'spiral_drop/spiral_drop.dart';
+import 'swing_hook/swing_hook.dart';
 import 'stack_runner/stack_runner.dart';
 import 'tube_sort/tube_sort.dart';
 
@@ -45,6 +47,8 @@ List<Cartridge> bundledCartridges() => const [
   SerpentLoopCartridge(),
   BrickfallCartridge(),
   CloudTowerCartridge(),
+  CurveKickCartridge(),
+  SwingHookCartridge(),
 ];
 
 CartridgeRegistry buildRegistry() => CartridgeRegistry(bundledCartridges());

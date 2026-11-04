@@ -31,7 +31,9 @@ detail, launch, pause, resume, Android back (pauses), restart, a drag across the
 | 17 | Blade Toss (`blade-toss`) | Flame 2D | blades into a rotating target | COMPLETE | 15 | `blade_toss_web.png` |
 | 18 | Serpent Loop (`serpent-loop`) | Flame 2D | snake (classic + wrap modes) | COMPLETE | 15 | `serpent_loop_web.png` |
 | 19 | Brickfall (`brickfall`) | Flame 2D | paddle-and-ball brick breaker | COMPLETE | 19 | `brickfall_web.png` |
-| 20 | Cloud Tower (`cloud-tower`) | Flame 2D (isometric) | tap-timing slab stacking | COMPLETE | 14 | – |
+| 20 | Cloud Tower (`cloud-tower`) | Flame 2D (isometric) | tap-timing slab stacking | COMPLETE | 14 | `cloud_tower_web.png` |
+| 21 | Curve Kick (`curve-kick`) | Flame 2D | draw-the-path football moments | COMPLETE | 12 | `curve_kick_web.png` |
+| 22 | Swing Hook (`swing-hook`) | Flame 2D | grapple swinging | COMPLETE | 17 | `swing_hook_web.png` |
 
 Not verified anywhere: real Android devices (none available). APKs are built only in CI, and that is
 unverified while pushes to GitHub fail (see CURRENT_STATUS.md).
@@ -184,3 +186,21 @@ unverified while pushes to GitHub fail (see CURRENT_STATUS.md).
   * The overhang is sliced off as falling debris.
   * Perfect drops snap and, in streaks, regrow the slab.
   * The sky changes from day to sunset, night and space.
+
+### Curve Kick
+* **Goal:** score within 3 attempts.
+* **Controls:** draw a path from the player on the ball. End it on a team-mate to pass; curl it into the goal to shoot.
+* **Systems:**
+  * Defenders, some on patrols, intercept within 0.9 m.
+  * The keeper tracks the ball near goal.
+  * 10 authored moments that then loop with faster keepers.
+  * A brute-force planner test proves every moment can be won.
+
+### Swing Hook
+* **Goal:** reach the finish line.
+* **Controls:** hold to hook the highlighted anchor; release to fly.
+* **Systems:**
+  * Rope as a distance constraint at a fixed step.
+  * Spring pads, spikes, pits, moving anchors.
+  * Checkpoints with 3 retries.
+  * 12 authored levels plus looped variants.
