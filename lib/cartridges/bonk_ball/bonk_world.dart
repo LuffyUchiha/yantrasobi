@@ -458,7 +458,7 @@ class BonkWorld {
     final left = p.x - bodyWidth / 2, right = p.x + bodyWidth / 2;
     final bottom = p.footY, top = p.footY + bodyHeight;
     final cx = ballX.clamp(left, right), cy = ballY.clamp(bottom, top);
-    var dx = ballX - cx, dy = ballY - cy;
+    final dx = ballX - cx, dy = ballY - cy;
     final d2 = dx * dx + dy * dy;
     if (d2 >= r * r) return;
     double nx, ny, depth;
@@ -780,7 +780,10 @@ class AiController {
     if (px < lo) px = 2 * lo - px;
     if (px > hi) px = 2 * hi - px;
     px = px.clamp(lo, hi);
-    final py = math.max(BonkWorld.ballRadius, w.ballY + w.ballVy * la - 0.5 * BonkWorld.ballGravity * la * la);
+    final py = math.max(
+      BonkWorld.ballRadius,
+      w.ballY + w.ballVy * la - 0.5 * BonkWorld.ballGravity * la * la,
+    );
 
     double target;
     var jump = false;

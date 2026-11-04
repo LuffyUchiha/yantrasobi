@@ -1,14 +1,13 @@
 # Current status
 
-_Updated: 2026-11-04 ~21:00 UTC (session start 20:08 UTC)._
+_Updated: 2026-11-04 ~21:55 UTC (session start 20:08 UTC). Development stopped on the user's request._
 
 ## Environment facts (verified)
 * Flutter 3.47.9 / Dart 3.13.7 are at `/opt/sdk/flutter`. flame is pinned to 1.38.2 and flutter_scene to 0.24.3.
 * **The Android SDK can't be installed in the sandbox.** dl.google.com returns 403 from the egress proxy.
   APK builds exist only in GitHub Actions (`.github/workflows/ci.yml`).
-* **Pushing to GitHub fails** with HTTP 403 ("Claude doesn't have GitHub access to LuffyUchiha/yantrasobi").
-  All work is committed locally on `claude/beautiful-wright-2ho13i`. CI has therefore **never run**.
-  The fix is to reconnect GitHub and install the Claude GitHub App on the repo, then push.
+* Pushing to GitHub failed with HTTP 403 for most of the session; access was fixed by the user near the
+  end and **all commits are now pushed** to `claude/beautiful-wright-2ho13i`. CI results are not yet observed.
 * No Android emulator or device. **There are no real-device FPS numbers.** The in-app perf overlay
   measures FPS live on whatever device runs the app.
 * The web build works locally. Screenshots in `docs/screenshots/` are real captures from headless Chromium
@@ -28,7 +27,7 @@ _Updated: 2026-11-04 ~21:00 UTC (session start 20:08 UTC)._
 | Crowd Forge (3D reference) | COMPLETE | 14 tests + web capture |
 | Arrow Survivor (2D reference) | COMPLETE | 9 tests + web capture |
 | Research catalog | DONE (secondary sources) | `research/CATALOG.md` |
-| Cartridge factory | 25 COMPLETE | see CARTRIDGES.md |
+| Cartridge factory | 27 COMPLETE, 3 PARTIAL | see CARTRIDGES.md |
 | Declarative data packs (JSON only) | DONE | `docs/DATA_PACKS.md`, `test/yantrasobi/data_pack_test.dart`; Brickfall consumes level packs |
 | Multiplayer-ready metadata | DONE | `CartridgeManifest.maxPlayers/localMultiplayer`; no networking in this branch (another session owns it) |
 
@@ -37,12 +36,15 @@ _Updated: 2026-11-04 ~21:00 UTC (session start 20:08 UTC)._
 |---|---|
 | `dart format --set-exit-if-changed lib test` | clean |
 | `flutter analyze` | No issues found |
-| `flutter test` (committed cartridges) | all passed (the full run also includes the in-progress Pocket Quest) |
+| `flutter test` | 440 passed, 0 failed (2026-11-04 ~21:53 UTC) |
 | `flutter build web --release` | succeeds (about 60–150 s) |
 | `flutter build apk` | not runnable locally (no Android SDK); CI only, never run because pushes fail |
 
 ## In progress
-* Backlog from the user's list (research/CATALOG.md): Cloud Tower is in progress; the next batch is queued.
+* Register Thrust Corridor and Digit Barrage in `lib/cartridges/catalog.dart` (their tests already pass), capture screenshots.
+* Finish Bonk Ball (`lib/cartridges/bonk_ball/`): it was stopped mid-build and has no tests yet.
+* The remaining backlog in research/CATALOG.md (Key Cascade, Cue Clash, Flipper Rush, Garden Guard, Snip Drop, Slope Buggy, Oven Rush, ...).
+* Verify the first GitHub Actions run (format, analyze, test, APK, web).
 
 ## Known gaps
 * Never run on a phone. Touch is exercised by widget tests and by mouse-driven Chromium captures only.
