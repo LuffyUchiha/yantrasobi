@@ -14,6 +14,9 @@ enum Sfx { tap, hit, coin, powerup, win, lose, pop, whoosh, merge, thud }
 /// Sound + haptics facade handed to every cartridge.
 abstract class AsobiAudio {
   void play(Sfx sfx);
+
+  /// Plays a short synthesized piano-like note (MIDI number, 60 = middle C).
+  void playNote(int midi) {}
   void haptic([HapticKind kind = HapticKind.light]);
   void dispose() {}
 }
@@ -24,8 +27,13 @@ enum HapticKind { light, medium, heavy, selection }
 class SilentAudio implements AsobiAudio {
   final List<Sfx> played = [];
 
+  final List<int> notes = [];
+
   @override
   void play(Sfx sfx) => played.add(sfx);
+
+  @override
+  void playNote(int midi) => notes.add(midi);
 
   @override
   void haptic([HapticKind kind = HapticKind.light]) {}
@@ -91,6 +99,20 @@ class SfxSynth {
       final attack = math.min(1.0, i / (0.005 * sampleRate));
       final env = attack * (1 - t);
       pcm[i] = (wave(phase, rng) * env * volume * 32767).round().clamp(-32768, 32767);
+    }
+    return wav(pcm);
+  }
+
+  /// A soft plucked note for MIDI number [midi] (sine + overtone, fast decay).
+  static Uint8List note(int midi, {double seconds = 0.45}) {
+    final freq = 440 * math.pow(2, (midi - 69) / 12).toDouble();
+    final n = (seconds * sampleRate).round();
+    final pcm = Int16List(n);
+    for (var i = 0; i < n; i++) {
+      final t = i / sampleRate;
+      final env = math.min(1.0, i / (0.004 * sampleRate)) * math.exp(-t * 6);
+      final v = math.sin(2 * math.pi * freq * t) * 0.7 + math.sin(4 * math.pi * freq * t) * 0.2;
+      pcm[i] = (v * env * 0.4 * 32767).round().clamp(-32768, 32767);
     }
     return wav(pcm);
   }
@@ -164,6 +186,23 @@ class SynthAudio implements AsobiAudio {
       });
     } catch (e) {
       debugPrint('Yantrasobi audio disabled: $e');
+      _broken = true;
+    }
+  }
+
+  final Map<int, Uint8List> _notes = {};
+
+  @override
+  void playNote(int midi) {
+    if (!settings.sound || _broken) return;
+    final bytes = _notes.putIfAbsent(midi, () => SfxSynth.note(midi));
+    try {
+      final p = _player();
+      p.stop().then((_) => p.play(BytesSource(bytes, mimeType: 'audio/wav'))).catchError((Object e) {
+        debugPrint('Yantrasobi audio disabled: $e');
+        _broken = true;
+      });
+    } catch (e) {
       _broken = true;
     }
   }
