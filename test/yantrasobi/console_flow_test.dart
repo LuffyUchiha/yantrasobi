@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yantrasobi/cartridges/catalog.dart';
+import 'package:yantrasobi/yantrasobi/adapters/scene_adapter.dart';
 import 'package:yantrasobi/yantrasobi/app.dart';
 import 'package:yantrasobi/yantrasobi/runtime/services.dart';
 
 void main() {
+  // No GPU in the test VM: 3D cartridges run their canvas fallback renderer.
+  setUpAll(() => SceneSupport.gpuAllowed = false);
+
   Future<AsobiServices> boot(WidgetTester tester) async {
     tester.view.physicalSize = const Size(1080, 2340);
     tester.view.devicePixelRatio = 3;
