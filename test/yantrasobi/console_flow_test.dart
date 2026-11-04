@@ -38,6 +38,16 @@ void main() {
     expect(find.byKey(const Key('library.tile.arrow-survivor')), findsOneWidget);
   });
 
+  testWidgets('multiplayer filter shows only multiplayer-capable cartridges', (tester) async {
+    await boot(tester);
+    await tester.drag(find.byType(ListView).first, const Offset(-600, 0));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('library.multiplayer')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('library.tile.puck-duel')), findsOneWidget);
+    expect(find.byKey(const Key('library.tile.tube-sort')), findsNothing);
+  });
+
   for (final cartridge in bundledCartridges()) {
     final id = cartridge.manifest.id;
     testWidgets('$id: launch → pause → resume → restart → exit', (tester) async {

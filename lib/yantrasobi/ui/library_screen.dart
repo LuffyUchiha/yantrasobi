@@ -18,6 +18,7 @@ class LibraryScreen extends StatefulWidget {
 class _LibraryScreenState extends State<LibraryScreen> {
   final TextEditingController _query = TextEditingController();
   CartridgeEngine? _engine;
+  bool _multiplayerOnly = false;
 
   @override
   void dispose() {
@@ -28,7 +29,10 @@ class _LibraryScreenState extends State<LibraryScreen> {
   @override
   Widget build(BuildContext context) {
     final services = AsobiScope.of(context);
-    final results = services.registry.search(_query.text, engine: _engine);
+    final results = services.registry
+        .search(_query.text, engine: _engine)
+        .where((c) => !_multiplayerOnly || c.manifest.maxPlayers > 1)
+        .toList();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Yantrasobi', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1)),
@@ -77,6 +81,16 @@ class _LibraryScreenState extends State<LibraryScreen> {
                 _chip('2D · Flame', CartridgeEngine.flame2d),
                 _chip('3D · Scene', CartridgeEngine.scene3d),
                 _chip('UI · Widgets', CartridgeEngine.widgets),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: FilterChip(
+                    key: const Key('library.multiplayer'),
+                    avatar: const Icon(Icons.people_alt_rounded, size: 18),
+                    label: const Text('Multiplayer'),
+                    selected: _multiplayerOnly,
+                    onSelected: (v) => setState(() => _multiplayerOnly = v),
+                  ),
+                ),
               ],
             ),
           ),
