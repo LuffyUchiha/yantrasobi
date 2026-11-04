@@ -64,15 +64,19 @@ class ArrowSurvivorGame extends AsobiFlameGame {
     if (_world == null) {
       _world = SurvivorWorld(
         width: size.x,
-        height: size.y,
+        height: arenaHeight,
         seed: seed ?? DateTime.now().microsecondsSinceEpoch,
       );
     } else {
-      _world!.resize(size.x, size.y);
+      _world!.resize(size.x, arenaHeight);
     }
   }
 
   static const double _stickRadius = 56;
+
+  /// The arena sits below the HUD so the archer never hides under it.
+  double get arenaTop => hudTop + 28;
+  double get arenaHeight => math.max(200, size.y - arenaTop - safePadding.bottom - 8);
 
   @override
   void onPointerDown(Vector2 position) {
@@ -179,6 +183,7 @@ class ArrowSurvivorGame extends AsobiFlameGame {
     final w = _world;
     if (w == null) return;
     canvas.save();
+    canvas.translate(0, arenaTop);
     if (_shake > 0) {
       final m = _shake * 14;
       canvas.translate(math.sin(w.time * 90) * m, math.cos(w.time * 77) * m);
@@ -275,16 +280,26 @@ class ArrowSurvivorGame extends AsobiFlameGame {
   }
 
   void _drawFloor(Canvas canvas) {
+    final w = _world!;
+    final arena = Rect.fromLTWH(0, 0, w.width, w.height);
+    canvas.drawRect(arena, Paint()..color = const Color(0xFF12142A));
     final grid = Paint()
       ..color = const Color(0xFF1B1D33)
       ..strokeWidth = 1;
     const step = 40.0;
-    for (var x = 0.0; x < size.x; x += step) {
-      canvas.drawLine(Offset(x, 0), Offset(x, size.y), grid);
+    for (var x = step; x < w.width; x += step) {
+      canvas.drawLine(Offset(x, 0), Offset(x, w.height), grid);
     }
-    for (var y = 0.0; y < size.y; y += step) {
-      canvas.drawLine(Offset(0, y), Offset(size.x, y), grid);
+    for (var y = step; y < w.height; y += step) {
+      canvas.drawLine(Offset(0, y), Offset(w.width, y), grid);
     }
+    canvas.drawRect(
+      arena.deflate(1),
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2
+        ..color = const Color(0xFF3DDC97).withValues(alpha: 0.35),
+    );
   }
 
   void _drawStick(Canvas canvas) {
