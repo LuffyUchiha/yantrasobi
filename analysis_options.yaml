@@ -1,0 +1,17 @@
+include: package:flutter_lints/flutter.yaml
+
+formatter:
+  page_width: 110
+
+analyzer:
+  exclude:
+    - build/**
+    - flutter_scene_generated/**
+    - android/**
+    - web/**
+
+linter:
+  rules:
+    - prefer_const_constructors
+    - prefer_final_locals
+    - avoid_print
