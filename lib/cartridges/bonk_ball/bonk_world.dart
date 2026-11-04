@@ -797,8 +797,12 @@ class AiController {
       } else {
         target = px - behind;
       }
-    } else if (px > wd * 0.62 && bvx > -3) {
-      // Ball deep in their half and not coming back fast: hold midfield.
+    } else if (px > wd * 0.62 &&
+        bvx > -3 &&
+        w.ballSpeed > 2 &&
+        (_c(w.players[1 - player].x) - px).abs() < px - mx) {
+      // Live ball deep in their half, they are closer, and it is not coming
+      // back fast: hold midfield.
       target = math.min(px - 2.5, wd * 0.5);
     } else {
       target = px - behind * 0.85;
