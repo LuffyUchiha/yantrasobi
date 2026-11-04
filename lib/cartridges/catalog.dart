@@ -9,6 +9,7 @@ import 'coil_clash/coil_clash.dart';
 import 'crowd_forge/crowd_forge.dart';
 import 'curve_kick/curve_kick.dart';
 import 'deep_dig/deep_dig.dart';
+import 'digit_barrage/digit_barrage.dart';
 import 'dodge_lane/dodge_lane.dart';
 import 'edge_dash/edge_dash.dart';
 import 'gridlock/gridlock.dart';
@@ -25,6 +26,7 @@ import 'serpent_loop/serpent_loop.dart';
 import 'shatter_run/shatter_run.dart';
 import 'spiral_drop/spiral_drop.dart';
 import 'swing_hook/swing_hook.dart';
+import 'thrust_corridor/thrust_corridor.dart';
 import 'stack_runner/stack_runner.dart';
 import 'tube_sort/tube_sort.dart';
 
@@ -59,6 +61,8 @@ List<Cartridge> bundledCartridges() => const [
   PuckDuelCartridge(),
   QuadPongCartridge(),
   CoilClashCartridge(),
+  ThrustCorridorCartridge(),
+  DigitBarrageCartridge(),
 ];
 
 CartridgeRegistry buildRegistry() => CartridgeRegistry(bundledCartridges());

@@ -39,8 +39,8 @@ detail, launch, pause, resume, Android back (pauses), restart, a drag across the
 | 25 | Puck Duel (`puck-duel`) | Flame 2D | air hockey, **multiplayer-ready** (vs CPU or 2 on one device) | COMPLETE | 15 | – |
 | 26 | Quad Pong (`quad-pong`) | Flame 2D | 2–4 player pong on one device, **multiplayer-ready** | COMPLETE | 9 | – |
 | 27 | Coil Clash (`coil-clash`) | Flame 2D | io snake battle vs 7 bots, **multiplayer-ready** (8 slots) | COMPLETE | 16 | – |
-| 28 | Thrust Corridor (`thrust-corridor`) | Flame 2D | hold-to-thrust endless flyer | PARTIAL: tests pass, not registered in catalog | 15 | – |
-| 29 | Digit Barrage (`digit-barrage`) | Flame 2D | cannon vs splitting numbered rocks, upgrade shop | PARTIAL: tests pass, not registered in catalog | 15 | – |
+| 28 | Thrust Corridor (`thrust-corridor`) | Flame 2D | hold-to-thrust endless flyer | COMPLETE | 15 | – |
+| 29 | Digit Barrage (`digit-barrage`) | Flame 2D | cannon vs splitting numbered rocks, upgrade shop | COMPLETE | 15 | – |
 | 30 | Bonk Ball (`bonk-ball`) | Flame 2D | 1v1 head football, multiplayer-ready (planned) | PARTIAL: unfinished, stopped mid-build, not registered | – | – |
 
 Not verified anywhere: real Android devices (none available). APKs are built only in CI, and that is
